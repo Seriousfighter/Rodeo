@@ -11,7 +11,7 @@ class UpdateRodeoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true; // Changed from false to true
     }
 
     /**
@@ -33,17 +33,17 @@ class UpdateRodeoRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'The name field is required.',
-            'name.string' => 'The name must be a string.',
-            'name.max' => 'The name may not be greater than 255 characters.',
-            'location.string' => 'The location must be a string.',
-            'location.max' => 'The location may not be greater than 255 characters.',
-            'description.string' => 'The description must be a string.',
-            'description.max' => 'The description may not be greater than 1000 characters.',
-            'renspa.string' => 'The renspa must be a string.',
-            'renspa.max' => 'The renspa may not be greater than 255 characters.',
-            'client_id.required' => 'The client field is required.',
-            'client_id.exists' => 'The selected client does not exist.',
+            'name.required' => 'El nombre es obligatorio.',
+            'name.string' => 'El nombre debe ser una cadena de texto.',
+            'name.max' => 'El nombre no puede tener más de 255 caracteres.',
+            'location.string' => 'La ubicación debe ser una cadena de texto.',
+            'location.max' => 'La ubicación no puede tener más de 255 caracteres.',
+            'description.string' => 'La descripción debe ser una cadena de texto.',
+            'description.max' => 'La descripción no puede tener más de 1000 caracteres.',
+            'renspa.string' => 'El RENSPA debe ser una cadena de texto.',
+            'renspa.max' => 'El RENSPA no puede tener más de 255 caracteres.',
+            'client_id.required' => 'El cliente es obligatorio.',
+            'client_id.exists' => 'El cliente seleccionado no existe.',
         ];
     }
 }
