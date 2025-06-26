@@ -10,114 +10,99 @@ use Inertia\Inertia;
 
 class ClientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    //each functions will implement interface
     protected ClientInterface $clientService;
+    
     public function __construct(ClientInterface $clientService)
     {
         $this->clientService = $clientService;
     }    
+    
     public function index()
     {
-        try{
+        try {
             $clientes = $this->clientService->index();
-            return Inertia::Render('Clients/Index', [
-                'clientes'=> $clientes,
+            return Inertia::render('Clients/Index', [
+                'clientes' => $clientes,
             ]);
         } catch (\Exception $e) {
-            // Handle the exception, log it, or return an error response
-            return response()->json(['error' => 'Failed to retrieve clients: ' . $e->getMessage()], 500);
+            return redirect()->back()->withErrors([
+                'error' => 'Error al cargar los clientes: ' . $e->getMessage()
+            ]);
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
-        
         try {
-            return Inertia::Render('Clients/Save',['clientes'=> '']);
+            return Inertia::render('Clients/Save');
         } catch (\Exception $e) {
-            // Handle the exception, log it, or return an error response
-            return response()->json(['error' => 'Failed to load create client form: ' . $e->getMessage()], 500);
+            return redirect()->route('clients.index')->withErrors([
+                'error' => 'Error al cargar el formulario de creación: ' . $e->getMessage()
+            ]);
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreClientRequest $request)
     {
         try {
             $client = $this->clientService->store($request->validated());
-            return redirect()->route('clients.index')->with('success', 'Client created successfully.');
+            return redirect()->route('clients.index')->with('success', 'Cliente creado correctamente.');
         } catch (\Exception $e) {
-            // Handle the exception, log it, or return an error response
-            return redirect()->back()->withErrors(['error' => 'Failed to create client: ' . $e->getMessage()]);
+            return redirect()->back()->withErrors([
+                'error' => 'Error al crear el cliente: ' . $e->getMessage()
+            ])->withInput();
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Client $client)
     {
         try {
-            $client = $this->clientService->show($client->id);
-            return Inertia::Render('Clients/Show', [
-                'client' => $client,
+            $clientData = $this->clientService->show($client->id);
+            return Inertia::render('Clients/Show', [
+                'client' => $clientData,
             ]);
         } catch (\Exception $e) {
-            // Handle the exception, log it, or return an error response
-            return response()->json(['error' => 'Failed to retrieve client: ' . $e->getMessage()], 500);
+            return redirect()->route('clients.index')->withErrors([
+                'error' => 'Error al cargar el cliente: ' . $e->getMessage()
+            ]);
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Client $client)
     {
-        try{
-            $client = $this->clientService->show($client->id);
-            return Inertia::Render('Clients/Save', [
-                'client' => $client,
+        try {
+            $clientData = $this->clientService->show($client->id);
+            return Inertia::render('Clients/Save', [
+                'client' => $clientData,
             ]);
         } catch (\Exception $e) {
-            // Handle the exception, log it, or return an error response
-            return response()->json(['error' => 'Failed to load edit client form: ' . $e->getMessage()], 500);
+            return redirect()->route('clients.index')->withErrors([
+                'error' => 'Error al cargar el formulario de edición: ' . $e->getMessage()
+            ]);
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateClientRequest $request, Client $client)
     {
         try {
-            $client = $this->clientService->update($client->id, $request->validated());
-            return redirect()->route('clients.index')->with('success', 'Client updated successfully.');
+            $updatedClient = $this->clientService->update($client->id, $request->validated());
+            return redirect()->route('clients.index')->with('success', 'Cliente actualizado correctamente.');
         } catch (\Exception $e) {
-            // Handle the exception, log it, or return an error response
-            return redirect()->back()->withErrors(['error' => 'Failed to update client: ' . $e->getMessage()]);
+            return redirect()->back()->withErrors([
+                'error' => 'Error al actualizar el cliente: ' . $e->getMessage()
+            ])->withInput();
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Client $client)
     {
         try {
             $this->clientService->delete($client->id);
-            return redirect()->route('clients.index')->with('success', 'Client deleted successfully.');
+            return redirect()->route('clients.index')->with('success', 'Cliente eliminado correctamente.');
         } catch (\Exception $e) {
-            // Handle the exception, log it, or return an error response
-            return redirect()->back()->withErrors(['error' => 'Failed to delete client: ' . $e->getMessage()]);
+            return redirect()->back()->withErrors([
+                'error' => 'Error al eliminar el cliente: ' . $e->getMessage()
+            ]);
         }
     }
 }

@@ -6,23 +6,23 @@
                 <div class="flex justify-between items-center py-6">
                     <div>
                         <h1 class="text-3xl font-bold text-gray-900">
-                            <i class="fas fa-user-circle text-green-600 mr-3"></i>
-                            Detalles del Ganadero
+                            <i class="fas fa-clipboard-list text-green-600 mr-3"></i>
+                            Detalles del Rodeo
                         </h1>
                         <p class="mt-2 text-sm text-gray-600">
-                            Información completa del cliente y sus rodeos registrados
+                            Información completa del rodeo y sus animales registrados
                         </p>
                     </div>
                     <div class="flex space-x-3">
                         <Link 
-                            :href="route('clients.edit', client.id)"
+                            :href="route('rodeos.edit', rodeo.id)"
                             class="inline-flex items-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm"
                         >
                             <i class="fas fa-edit mr-2"></i>
                             Editar
                         </Link>
                         <Link 
-                            :href="route('clients.index')"
+                            :href="route('rodeos.index')"
                             class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm"
                         >
                             <i class="fas fa-arrow-left mr-2"></i>
@@ -36,56 +36,65 @@
         <!-- Main Content -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Client Information Card -->
+                <!-- Rodeo Information Card -->
                 <div class="lg:col-span-2">
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                         <!-- Card Header -->
                         <div class="px-6 py-4 border-b border-gray-200 bg-green-50">
                             <div class="flex items-center space-x-3">
                                 <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-user text-green-600 text-xl"></i>
+                                    <i class="fas fa-clipboard-list text-green-600 text-xl"></i>
                                 </div>
                                 <div>
                                     <h2 class="text-xl font-semibold text-gray-900">
-                                        {{ client.name }} {{ client.last_name }}
+                                        {{ rodeo.name }}
                                     </h2>
-                                    <p class="text-sm text-gray-600">Ganadero</p>
+                                    <p class="text-sm text-gray-600">Rodeo de {{ rodeo.client?.name }} {{ rodeo.client?.last_name }}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Client Details -->
+                        <!-- Rodeo Details -->
                         <div class="p-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Personal Information -->
+                                <!-- Basic Information -->
                                 <div class="space-y-4">
                                     <h3 class="text-lg font-medium text-gray-900 mb-4">
                                         <i class="fas fa-info-circle text-blue-600 mr-2"></i>
-                                        Información Personal
+                                        Información Básica
                                     </h3>
                                     
                                     <div class="space-y-3">
                                         <div class="flex items-center space-x-3">
+                                            <i class="fas fa-tag text-gray-400 w-5"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-700">Nombre del Rodeo</p>
+                                                <p class="text-sm text-gray-600">{{ rodeo.name }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center space-x-3">
                                             <i class="fas fa-user text-gray-400 w-5"></i>
                                             <div>
-                                                <p class="text-sm font-medium text-gray-700">Nombre Completo</p>
-                                                <p class="text-sm text-gray-600">{{ client.name }} {{ client.last_name }}</p>
+                                                <p class="text-sm font-medium text-gray-700">Cliente</p>
+                                                <p class="text-sm text-gray-600">{{ rodeo.client?.name }} {{ rodeo.client?.last_name }}</p>
                                             </div>
                                         </div>
 
                                         <div class="flex items-center space-x-3">
-                                            <i class="fas fa-envelope text-gray-400 w-5"></i>
+                                            <i class="fas fa-map-marker-alt text-gray-400 w-5"></i>
                                             <div>
-                                                <p class="text-sm font-medium text-gray-700">Correo Electrónico</p>
-                                                <p class="text-sm text-gray-600">{{ client.email }}</p>
+                                                <p class="text-sm font-medium text-gray-700">Ubicación</p>
+                                                <p class="text-sm text-gray-600">{{ rodeo.location || 'No especificada' }}</p>
                                             </div>
                                         </div>
 
+
                                         <div class="flex items-center space-x-3">
-                                            <i class="fas fa-phone text-gray-400 w-5"></i>
+                                            <i class="fas fa-file-alt text-gray-400 w-5"></i>
                                             <div>
-                                                <p class="text-sm font-medium text-gray-700">Teléfono</p>
-                                                <p class="text-sm text-gray-600">{{ client.phone }}</p>
+                                                <p class="text-sm font-medium text-gray-700">RENSPA</p>
+                                                <p class="text-sm text-gray-600">{{ rodeo.renspa || 'No especificado' }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -97,33 +106,25 @@
                                         <i class="fas fa-calendar-alt text-blue-600 mr-2"></i>
                                         Información de Registro
                                     </h3>
-                                    
-                                    <div class="space-y-3">
-                                        <div class="flex items-center space-x-3">
-                                            <i class="fas fa-calendar-plus text-gray-400 w-5"></i>
-                                            <div>
-                                                <p class="text-sm font-medium text-gray-700">Fecha de Registro</p>
-                                                <p class="text-sm text-gray-600">{{ formatDate(client.created_at) }}</p>
-                                            </div>
-                                        </div>
 
                                         <div class="flex items-center space-x-3">
-                                            <i class="fas fa-calendar-check text-gray-400 w-5"></i>
+                                            <i class="fas fa-cow text-gray-400 w-5"></i>
                                             <div>
-                                                <p class="text-sm font-medium text-gray-700">Última Actualización</p>
-                                                <p class="text-sm text-gray-600">{{ formatDate(client.updated_at) }}</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex items-center space-x-3">
-                                            <i class="fas fa-clipboard-list text-gray-400 w-5"></i>
-                                            <div>
-                                                <p class="text-sm font-medium text-gray-700">Total de Rodeos</p>
-                                                <p class="text-sm text-gray-600">{{ client.rodeos ? client.rodeos.length : 0 }} registrados</p>
+                                                <p class="text-sm font-medium text-gray-700">Total de Animales</p>
+                                                <p class="text-sm text-gray-600">{{ rodeo.animals ? rodeo.animals.length : 0 }} registrados</p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Description Section -->
+                            <div v-if="rodeo.description" class="mt-6 pt-6 border-t border-gray-200">
+                                <h3 class="text-lg font-medium text-gray-900 mb-3">
+                                    <i class="fas fa-align-left text-blue-600 mr-2"></i>
+                                    Descripción
+                                </h3>
+                                <p class="text-sm text-gray-600 leading-relaxed">{{ rodeo.description }}</p>
                             </div>
                         </div>
                     </div>
@@ -141,19 +142,27 @@
                         </div>
                         <div class="p-6 space-y-3">
                             <Link 
-                                :href="route('clients.edit', client.id)"
+                                :href="route('rodeos.edit', rodeo.id)"
                                 class="w-full inline-flex items-center justify-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-lg transition-colors duration-200"
                             >
                                 <i class="fas fa-edit mr-2"></i>
-                                Editar Cliente
+                                Editar Rodeo
                             </Link>
                             
                             <Link 
-                                :href="route('rodeos.create', { client_id: client.id })"
+                                :href="route('animals.create', { rodeo_id: rodeo.id })"
                                 class="w-full inline-flex items-center justify-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
                             >
                                 <i class="fas fa-plus mr-2"></i>
-                                Nuevo Rodeo
+                                Nuevo Animal
+                            </Link>
+
+                            <Link 
+                                :href="route('clients.show', rodeo.client.id)"
+                                class="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
+                            >
+                                <i class="fas fa-user mr-2"></i>
+                                Ver Cliente
                             </Link>
 
                             <button
@@ -161,7 +170,7 @@
                                 class="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200"
                             >
                                 <i class="fas fa-trash mr-2"></i>
-                                Eliminar Cliente
+                                Eliminar Rodeo
                             </button>
                         </div>
                     </div>
@@ -179,23 +188,11 @@
                                 <div class="bg-green-50 rounded-lg p-4">
                                     <div class="flex items-center">
                                         <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                            <i class="fas fa-clipboard-list text-green-600"></i>
+                                            <i class="fas fa-cow text-green-600"></i>
                                         </div>
                                         <div class="ml-3">
-                                            <p class="text-sm font-medium text-green-900">Rodeos Activos</p>
-                                            <p class="text-2xl font-bold text-green-600">{{ client.rodeos ? client.rodeos.length : 0 }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="bg-blue-50 rounded-lg p-4">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                            <i class="fas fa-cow text-blue-600"></i>
-                                        </div>
-                                        <div class="ml-3">
-                                            <p class="text-sm font-medium text-blue-900">Total Animales</p>
-                                            <p class="text-2xl font-bold text-blue-600">{{ getTotalAnimals() }}</p>
+                                            <p class="text-sm font-medium text-green-900">Animales</p>
+                                            <p class="text-2xl font-bold text-green-600">{{ rodeo.animals ? rodeo.animals.length : 0 }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -205,77 +202,68 @@
                 </div>
             </div>
 
-            <!-- Rodeos Section -->
+            <!-- Animals Section -->
             <div class="mt-8">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                     <div class="px-6 py-4 border-b border-gray-200 bg-green-50">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-3">
                                 <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-clipboard-list text-green-600"></i>
+                                    <i class="fas fa-cow text-green-600"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-xl font-semibold text-gray-900">Rodeos Registrados</h3>
-                                    <p class="text-sm text-gray-600">Lista de todos los rodeos asociados a este cliente</p>
+                                    <h3 class="text-xl font-semibold text-gray-900">Animales Registrados</h3>
+                                    <p class="text-sm text-gray-600">Lista de todos los animales en este rodeo</p>
                                 </div>
                             </div>
                             <Link 
-                                :href="route('rodeos.create', { client_id: client.id })"
+                                :href="route('animals.create', { rodeo_id: rodeo.id })"
                                 class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
                             >
                                 <i class="fas fa-plus mr-2"></i>
-                                Nuevo Rodeo
+                                Nuevo Animal
                             </Link>
                         </div>
                     </div>
 
                     <div class="p-6">
-                        <div v-if="!client.rodeos || client.rodeos.length === 0" class="text-center py-8">
-                            <i class="fas fa-clipboard text-gray-400 text-4xl mb-4"></i>
-                            <h4 class="text-lg font-medium text-gray-900 mb-2">No hay rodeos registrados</h4>
-                            <p class="text-gray-600 mb-4">Este cliente aún no tiene rodeos asociados</p>
+                        <div v-if="!rodeo.animals || rodeo.animals.length === 0" class="text-center py-8">
+                            <i class="fas fa-cow text-gray-400 text-4xl mb-4"></i>
+                            <h4 class="text-lg font-medium text-gray-900 mb-2">No hay animales registrados</h4>
+                            <p class="text-gray-600 mb-4">Este rodeo aún no tiene animales asociados</p>
                             <Link 
-                                :href="route('rodeos.create', { client_id: client.id })"
+                                :href="route('animals.create', { rodeo_id: rodeo.id })"
                                 class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
                             >
                                 <i class="fas fa-plus mr-2"></i>
-                                Crear Primer Rodeo
+                                Agregar Primer Animal
                             </Link>
                         </div>
 
                         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <div 
-                                v-for="rodeo in client.rodeos" 
-                                :key="rodeo.id"
+                                v-for="animal in rodeo.animals" 
+                                :key="animal.id"
                                 class="bg-gray-50 rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow duration-200"
                             >
                                 <div class="flex items-start justify-between mb-3">
                                     <div>
-                                        <h4 class="text-lg font-semibold text-gray-900">{{ rodeo.name }}</h4>
-                                        <p class="text-sm text-gray-600">{{ rodeo.location }}</p>
+                                        <h4 class="text-lg font-semibold text-gray-900">{{ animal.caravana }}</h4>
+                                        <p class="text-sm text-gray-600">{{ animal.caravana_oficial || 'Sin caravana oficial' }}</p>
                                     </div>
-                                    
                                     <Link 
-                                        :href="route('rodeos.show', rodeo.id)"
+                                        :href="route('animals.show', animal.id)"
                                         class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                                        title="Ver rodeo"
-                                    >VER RODEO
+                                        title="Ver animal"
+                                    >
                                         <i class="fas fa-eye"></i>
                                     </Link>
                                 </div>
                                 
                                 <div class="space-y-2">
                                     <div class="flex items-center space-x-2">
-                                        <i class="fas fa-map-marker-alt text-gray-400 text-sm"></i>
-                                        <span class="text-sm text-gray-600">{{ rodeo.location || 'Sin ubicación' }}</span>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
                                         <i class="fas fa-calendar text-gray-400 text-sm"></i>
-                                        <span class="text-sm text-gray-600">{{ formatDate(rodeo.created_at) }}</span>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <i class="fas fa-cow text-gray-400 text-sm"></i>
-                                        <span class="text-sm text-gray-600">{{ rodeo.animals ? rodeo.animals.length : 0 }} animales</span>
+                                        <span class="text-sm text-gray-600">{{ formatDate(animal.created_at) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -293,8 +281,8 @@
                     <h3 class="text-lg font-semibold text-gray-900">Confirmar Eliminación</h3>
                 </div>
                 <p class="text-gray-600 mb-6">
-                    ¿Estás seguro de que deseas eliminar a <strong>{{ client.name }} {{ client.last_name }}</strong>? 
-                    Esta acción eliminará también todos sus rodeos y no se puede deshacer.
+                    ¿Estás seguro de que deseas eliminar el rodeo <strong>{{ rodeo.name }}</strong>? 
+                    Esta acción eliminará también todos los animales asociados y no se puede deshacer.
                 </p>
                 <div class="flex space-x-3">
                     <button
@@ -304,7 +292,7 @@
                         Cancelar
                     </button>
                     <button
-                        @click="deleteClient"
+                        @click="deleteRodeo"
                         class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200"
                     >
                         Eliminar
@@ -312,7 +300,7 @@
                 </div>
             </div>
         </div>
-    </div>
+  
 </template>
 
 <script setup>
@@ -321,7 +309,7 @@ import { Link, router } from '@inertiajs/vue3'
 
 // Props
 const props = defineProps({
-    client: {
+    rodeo: {
         type: Object,
         required: true
     }
@@ -330,24 +318,7 @@ const props = defineProps({
 // Reactive data
 const showDeleteModal = ref(false)
 
-// Methods
-const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('es-ES', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    })
-}
 
-const getTotalAnimals = () => {
-    if (!props.client.rodeos) return 0
-    return props.client.rodeos.reduce((total, rodeo) => {
-        return total + (rodeo.animals ? rodeo.animals.length : 0)
-    }, 0)
-}
 
 const confirmDelete = () => {
     showDeleteModal.value = true
@@ -357,10 +328,10 @@ const cancelDelete = () => {
     showDeleteModal.value = false
 }
 
-const deleteClient = () => {
-    router.delete(route('clients.destroy', props.client.id), {
+const deleteRodeo = () => {
+    router.delete(route('rodeos.destroy', props.rodeo.id), {
         onSuccess: () => {
-            router.visit(route('clients.index'))
+            router.visit(route('rodeos.index'))
         }
     })
 }

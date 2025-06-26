@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Rodeo;
+use App\Services\Interfaces\RodeoInterface;
 
 class RodeoService implements RodeoInterface
 {
@@ -29,10 +31,9 @@ class RodeoService implements RodeoInterface
     {
         $rodeo = new Rodeo();
         $rodeo->name = $data['name'];
-        $rodeo->date = $data['date'];
-        $rodeo->location = $data['location'];
-        $rodeo->description = $data['description'];
-        $rodeo->renspa = $data['renspa'];
+        $rodeo->location = $data['location'] ?? null;
+        $rodeo->description = $data['description'] ?? null;
+        $rodeo->renspa = $data['renspa'] ?? null;
         $rodeo->client_id = $data['client_id'];
         
         if ($rodeo->save()) {
@@ -50,11 +51,10 @@ class RodeoService implements RodeoInterface
             return null;
         }
         
-        $rodeo->name = $data['name'];
-        $rodeo->date = $data['date'];
-        $rodeo->location = $data['location'];
-        $rodeo->description = $data['description'];
-        $rodeo->renspa = $data['renspa'];
+        $rodeo->name = $data['name'];        
+        $rodeo->location = $data['location'] ?? null;
+        $rodeo->description = $data['description'] ?? null;
+        $rodeo->renspa = $data['renspa'] ?? null;
         $rodeo->client_id = $data['client_id'];
         
         if ($rodeo->save()) {

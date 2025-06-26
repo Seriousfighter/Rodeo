@@ -11,7 +11,7 @@ class ClientService implements ClientInterface
     public function index()
     {
        //$clientes = Client::with(['rodeos'])->get();
-       $clientes = Client::all();
+       $clientes = Client::with(['rodeos'])->get();
         if (!$clientes) {
             return null;
         }
