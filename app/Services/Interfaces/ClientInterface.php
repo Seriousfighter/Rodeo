@@ -2,13 +2,13 @@
 
 namespace App\Services\Interfaces;
 
-interface ClienteInterface
+interface ClientInterface
 {
     /**
      * Create a new property with related data
      * 
      * @param array $data Property data including ubicacion and tipo
-     * @return \App\Models\Cliente
+     * @return \App\Models\Client
      */
     public function store(array $data);
     
@@ -17,7 +17,7 @@ interface ClienteInterface
      * 
      * @param int $id Property ID to update
      * @param array $data Updated property data
-     * @return \App\Models\Cliente|null
+     * @return \App\Models\Client|null
      */
     public function update($id, array $data);
     
@@ -33,7 +33,7 @@ interface ClienteInterface
      * Get a property with its relationships
      * 
      * @param int $id Property ID to retrieve
-     * @return \App\Models\Cliente|null
+     * @return \App\Models\Client|null
      */
     public function show($id);
     /**
@@ -49,7 +49,7 @@ interface ClienteInterface
      * Find a property by ID with its relationships
      * 
      * @param int $id Property ID to find
-     * @return \App\Models\Cliente|null
+     * @return \App\Models\Client|null
      */
     public function findById($id);
 }

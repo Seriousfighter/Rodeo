@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Models\Client;
-use App\Services\Interfaces\ClienteInterface;
+use App\Services\Interfaces\ClientInterface;
 use Inertia\Inertia;
 
 class ClientController extends Controller
@@ -14,8 +14,8 @@ class ClientController extends Controller
      * Display a listing of the resource.
      */
     //each functions will implement interface
-    protected ClienteInterface $clientService;
-    public function __construct(ClienteInterface $clientService)
+    protected ClientInterface $clientService;
+    public function __construct(ClientInterface $clientService)
     {
         $this->clientService = $clientService;
     }    

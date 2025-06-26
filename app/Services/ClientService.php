@@ -2,11 +2,11 @@
 namespace App\Services;
 use App\Models\Client;
 use Illuminate\Support\Facades\Storage;
-use App\Services\Interfaces\ClienteInterface;
+use App\Services\Interfaces\ClientInterface;
 
 /*this is a ClientService it will manage all the crud and other funciton, then in the controller i will call this services<?php*/
 
-class ClienteService implements ClienteInterface
+class ClientService implements ClientInterface
 {
     public function index()
     {
