@@ -5,15 +5,23 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRodeoRequest;
 use App\Http\Requests\UpdateRodeoRequest;
 use App\Models\Rodeo;
+use App\Services\Interfaces\RodeoInterface;
+use Inertia\Inertia;
 
 class RodeoController extends Controller
 {
+
+    protected RodeoInterface $rodeoService;
+    public function __construct(RodeoInterface $rodeoService)
+    {
+        $this->rodeoService = $rodeoService;
+    }    
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        
     }
 
     /**

@@ -54,10 +54,12 @@ class ClientController extends Controller
     {
         try {
             $client = $this->clientService->store($request->validated());
-            return redirect()->route('clients.index')->with('success', 'Client created successfully.');
+            return redirect()->route('clients.index')->with('success', 'Cliente creado correctamente.');
         } catch (\Exception $e) {
-            // Handle the exception, log it, or return an error response
-            return redirect()->back()->withErrors(['error' => 'Failed to create client: ' . $e->getMessage()]);
+            // Error del sistema, no de validación
+            return redirect()->back()->withErrors([
+                'system' => 'Error al crear el cliente: ' . $e->getMessage()
+            ])->withInput();
         }
     }
 

@@ -11,7 +11,6 @@ class Rodeo extends Model
     use HasFactory;
     protected $fillable = [
         'name',
-        'date',
         'location',
         'description',
         'renspa',
