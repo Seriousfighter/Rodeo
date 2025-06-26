@@ -20,8 +20,8 @@ class Client extends Model
     //realtionships
 
     //with rodeos
-  /*  public function rodeos()
+    public function rodeos()
     {
         return $this->hasMany(Rodeo::class);
-    }*/
+    }
 }

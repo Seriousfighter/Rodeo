@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\RodeoController;
+use App\Http\Controllers\AnimalController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -25,5 +27,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::resource('clients', ClientController::class);
+    Route::resource('rodeos', RodeoController::class);
+    Route::resource('animals', AnimalController::class);
    
 });
