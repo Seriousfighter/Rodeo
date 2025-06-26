@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\Animal;
+use App\Services\Interfaces\AnimalInterface;
 
 class AnimalService implements AnimalInterface
 {
     public function index()
     {
-        $animals = Animal::with(['rodeo'])->get();
+        $animals = Animal::with(['rodeo.client'])->get();
         if (!$animals) {
             return null;
         }
@@ -29,7 +31,7 @@ class AnimalService implements AnimalInterface
     {
         $animal = new Animal();
         $animal->caravana = $data['caravana'];
-        $animal->caravana_oficial = $data['caravana_oficial'];
+        $animal->caravana_oficial = $data['caravana_oficial'] ?? null;
         $animal->rodeo_id = $data['rodeo_id'];
         
         if ($animal->save()) {
@@ -48,7 +50,7 @@ class AnimalService implements AnimalInterface
         }
         
         $animal->caravana = $data['caravana'];
-        $animal->caravana_oficial = $data['caravana_oficial'];
+        $animal->caravana_oficial = $data['caravana_oficial'] ?? null;
         $animal->rodeo_id = $data['rodeo_id'];
         
         if ($animal->save()) {
@@ -75,7 +77,7 @@ class AnimalService implements AnimalInterface
 
     public function findById($id)
     {
-        $animal = Animal::with(['rodeo'])->find($id);
+        $animal = Animal::with(['rodeo.client'])->find($id);
         
         if (!$animal) {
             return null;
