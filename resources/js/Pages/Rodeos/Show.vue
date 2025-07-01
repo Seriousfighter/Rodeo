@@ -10,7 +10,7 @@
                             Detalles del Rodeo
                         </h1>
                         <p class="mt-2 text-sm text-gray-600">
-                            Información completa del rodeo y sus animales registrados
+                            Información completa del rodeo y gestión de sus animales
                         </p>
                     </div>
                     <div class="flex space-x-3">
@@ -89,6 +89,13 @@
                                             </div>
                                         </div>
 
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-calendar text-gray-400 w-5"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-700">Fecha del Rodeo</p>
+                                                <p class="text-sm text-gray-600">{{ rodeo.date ? formatDate(rodeo.date) : 'No especificada' }}</p>
+                                            </div>
+                                        </div>
 
                                         <div class="flex items-center space-x-3">
                                             <i class="fas fa-file-alt text-gray-400 w-5"></i>
@@ -106,12 +113,29 @@
                                         <i class="fas fa-calendar-alt text-blue-600 mr-2"></i>
                                         Información de Registro
                                     </h3>
+                                    
+                                    <div class="space-y-3">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-calendar-plus text-gray-400 w-5"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-700">Fecha de Registro</p>
+                                                <p class="text-sm text-gray-600">{{ formatDate(rodeo.created_at) }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-calendar-check text-gray-400 w-5"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-700">Última Actualización</p>
+                                                <p class="text-sm text-gray-600">{{ formatDate(rodeo.updated_at) }}</p>
+                                            </div>
+                                        </div>
 
                                         <div class="flex items-center space-x-3">
                                             <i class="fas fa-cow text-gray-400 w-5"></i>
                                             <div>
                                                 <p class="text-sm font-medium text-gray-700">Total de Animales</p>
-                                                <p class="text-sm text-gray-600">{{ rodeo.animals ? rodeo.animals.length : 0 }} registrados</p>
+                                                <p class="text-sm text-gray-600">{{ animalCount }} registrados</p>
                                             </div>
                                         </div>
                                     </div>
@@ -147,14 +171,6 @@
                             >
                                 <i class="fas fa-edit mr-2"></i>
                                 Editar Rodeo
-                            </Link>
-                            
-                            <Link 
-                                :href="route('animals.create', { rodeo_id: rodeo.id })"
-                                class="w-full inline-flex items-center justify-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
-                            >
-                                <i class="fas fa-plus mr-2"></i>
-                                Nuevo Animal
                             </Link>
 
                             <Link 
@@ -192,7 +208,19 @@
                                         </div>
                                         <div class="ml-3">
                                             <p class="text-sm font-medium text-green-900">Animales</p>
-                                            <p class="text-2xl font-bold text-green-600">{{ rodeo.animals ? rodeo.animals.length : 0 }}</p>
+                                            <p class="text-2xl font-bold text-green-600">{{ animalCount }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-calendar text-blue-600"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-blue-900">Días Registrado</p>
+                                            <p class="text-2xl font-bold text-blue-600">{{ getDaysRegistered() }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -202,74 +230,15 @@
                 </div>
             </div>
 
-            <!-- Animals Section -->
+            <!-- Animals Management Section -->
             <div class="mt-8">
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                    <div class="px-6 py-4 border-b border-gray-200 bg-green-50">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-cow text-green-600"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-xl font-semibold text-gray-900">Animales Registrados</h3>
-                                    <p class="text-sm text-gray-600">Lista de todos los animales en este rodeo</p>
-                                </div>
-                            </div>
-                            <Link 
-                                :href="route('animals.create', { rodeo_id: rodeo.id })"
-                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
-                            >
-                                <i class="fas fa-plus mr-2"></i>
-                                Nuevo Animal
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div class="p-6">
-                        <div v-if="!rodeo.animals || rodeo.animals.length === 0" class="text-center py-8">
-                            <i class="fas fa-cow text-gray-400 text-4xl mb-4"></i>
-                            <h4 class="text-lg font-medium text-gray-900 mb-2">No hay animales registrados</h4>
-                            <p class="text-gray-600 mb-4">Este rodeo aún no tiene animales asociados</p>
-                            <Link 
-                                :href="route('animals.create', { rodeo_id: rodeo.id })"
-                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
-                            >
-                                <i class="fas fa-plus mr-2"></i>
-                                Agregar Primer Animal
-                            </Link>
-                        </div>
-
-                        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <div 
-                                v-for="animal in rodeo.animals" 
-                                :key="animal.id"
-                                class="bg-gray-50 rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow duration-200"
-                            >
-                                <div class="flex items-start justify-between mb-3">
-                                    <div>
-                                        <h4 class="text-lg font-semibold text-gray-900">{{ animal.caravana }}</h4>
-                                        <p class="text-sm text-gray-600">{{ animal.caravana_oficial || 'Sin caravana oficial' }}</p>
-                                    </div>
-                                    <Link 
-                                        :href="route('animals.show', animal.id)"
-                                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                                        title="Ver animal"
-                                    >
-                                        <i class="fas fa-eye"></i>
-                                    </Link>
-                                </div>
-                                
-                                <div class="space-y-2">
-                                    <div class="flex items-center space-x-2">
-                                        <i class="fas fa-calendar text-gray-400 text-sm"></i>
-                                        <span class="text-sm text-gray-600">{{ formatDate(animal.created_at) }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <AnimalTableEditor 
+                    :rodeo-id="rodeo.id" 
+                    :animals="rodeo.animals || []"
+                    @animal-added="handleAnimalAdded"
+                    @animal-updated="handleAnimalUpdated"
+                    @animal-deleted="handleAnimalDeleted"
+                />
             </div>
         </div>
 
@@ -300,12 +269,13 @@
                 </div>
             </div>
         </div>
-  
+    </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
+import AnimalTableEditor from '@/Components/AnimalTableEditor.vue'
 
 // Props
 const props = defineProps({
@@ -317,9 +287,29 @@ const props = defineProps({
 
 // Reactive data
 const showDeleteModal = ref(false)
+const animalCount = ref(props.rodeo.animals ? props.rodeo.animals.length : 0)
 
+// Computed properties
+const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    })
+}
 
+const getDaysRegistered = () => {
+    const createdDate = new Date(props.rodeo.created_at)
+    const today = new Date()
+    const diffTime = Math.abs(today - createdDate)
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+}
 
+// Methods
 const confirmDelete = () => {
     showDeleteModal.value = true
 }
@@ -334,6 +324,21 @@ const deleteRodeo = () => {
             router.visit(route('rodeos.index'))
         }
     })
+}
+
+// Animal event handlers
+const handleAnimalAdded = (animal) => {
+    animalCount.value++
+    // You can add more logic here if needed, like updating the rodeo data
+}
+
+const handleAnimalUpdated = (animal) => {
+    // Handle animal update if needed
+}
+
+const handleAnimalDeleted = (animalId) => {
+    animalCount.value--
+    // Handle animal deletion if needed
 }
 </script>
 

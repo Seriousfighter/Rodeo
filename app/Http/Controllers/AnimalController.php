@@ -27,8 +27,10 @@ class AnimalController extends Controller
     {
         try {
             $animals = $this->animalService->index();
+            $rodeos = $this->rodeoService->index();
             return Inertia::render('Animals/Index', [
                 'animals' => $animals,
+                'rodeos' => $rodeos,
             ]);
         } catch (\Exception $e) {
             return redirect()->back()->withErrors([
@@ -38,8 +40,100 @@ class AnimalController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Store a newly created resource in storage via AJAX.
      */
+    public function store(StoreAnimalRequest $request)
+    {
+        try {
+            $animal = $this->animalService->store($request->validated());
+            $animalWithRelations = $this->animalService->show($animal->id);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Animal creado correctamente.',
+                'animal' => $animalWithRelations
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el animal: ' . $e->getMessage()
+            ], 422);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage via AJAX.
+     */
+    public function update(UpdateAnimalRequest $request, Animal $animal)
+    {
+        try {
+            $updatedAnimal = $this->animalService->update($animal->id, $request->validated());
+            $animalWithRelations = $this->animalService->show($animal->id);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Animal actualizado correctamente.',
+                'animal' => $animalWithRelations
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el animal: ' . $e->getMessage()
+            ], 422);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage via AJAX.
+     */
+    public function destroy(Animal $animal)
+    {
+        try {
+            $this->animalService->delete($animal->id);
+            return response()->json([
+                'success' => true,
+                'message' => 'Animal eliminado correctamente.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el animal: ' . $e->getMessage()
+            ], 422);
+        }
+    }
+    /**
+     * Delete multiple animals at once
+     */
+    public function bulkDestroy(Request $request)
+    {
+        try {
+            $animalIds = $request->validate([
+                'animal_ids' => 'required|array',
+                'animal_ids.*' => 'exists:animals,id'
+            ]);
+
+            $deletedCount = 0;
+            foreach ($animalIds['animal_ids'] as $id) {
+                if ($this->animalService->delete($id)) {
+                    $deletedCount++;
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "{$deletedCount} animal" . ($deletedCount > 1 ? 'es' : '') . " eliminado" . ($deletedCount > 1 ? 's' : '') . " correctamente.",
+                'deleted_count' => $deletedCount
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar los animales: ' . $e->getMessage()
+            ], 422);
+        }
+    }
+
+
+    // Mantener los métodos originales para compatibilidad
     public function create()
     {
         try {
@@ -54,27 +148,8 @@ class AnimalController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreAnimalRequest $request)
-    {
-        try {
-            $animal = $this->animalService->store($request->validated());
-            return redirect()->route('animals.index')->with('success', 'Animal creado correctamente.');
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors([
-                'error' => 'Error al crear el animal: ' . $e->getMessage()
-            ])->withInput();
-        }
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Animal $animal)
     {
-        
         try {
             $animalData = $this->animalService->show($animal->id);
             return Inertia::render('Animals/Show', [
@@ -87,9 +162,6 @@ class AnimalController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Animal $animal)
     {
         try {
@@ -102,36 +174,6 @@ class AnimalController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('animals.index')->withErrors([
                 'error' => 'Error al cargar el formulario de edición: ' . $e->getMessage()
-            ]);
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAnimalRequest $request, Animal $animal)
-    {
-        try {
-            $updatedAnimal = $this->animalService->update($animal->id, $request->validated());
-            return redirect()->route('animals.index')->with('success', 'Animal actualizado correctamente.');
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors([
-                'error' => 'Error al actualizar el animal: ' . $e->getMessage()
-            ])->withInput();
-        }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Animal $animal)
-    {
-        try {
-            $this->animalService->delete($animal->id);
-            return redirect()->route('animals.index')->with('success', 'Animal eliminado correctamente.');
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors([
-                'error' => 'Error al eliminar el animal: ' . $e->getMessage()
             ]);
         }
     }
