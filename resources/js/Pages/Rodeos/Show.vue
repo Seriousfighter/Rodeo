@@ -260,12 +260,7 @@
                                     </Link>
                                 </div>
                                 
-                                <div class="space-y-2">
-                                    <div class="flex items-center space-x-2">
-                                        <i class="fas fa-calendar text-gray-400 text-sm"></i>
-                                        <span class="text-sm text-gray-600">{{ formatDate(animal.created_at) }}</span>
-                                    </div>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>
