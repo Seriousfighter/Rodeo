@@ -29,5 +29,6 @@ Route::middleware([
     Route::resource('clients', ClientController::class);
     Route::resource('rodeos', RodeoController::class);
     Route::resource('animals', AnimalController::class);
+    Route::delete('animals/bulk-destroy', [AnimalController::class, 'bulkDestroy'])->name('animals.bulkDestroy');
    
 });

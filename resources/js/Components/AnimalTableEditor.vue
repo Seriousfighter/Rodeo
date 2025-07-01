@@ -50,10 +50,49 @@
                     <span class="text-sm text-gray-600">
                         Total: <span class="font-semibold text-green-600">{{ filteredAnimals.length }}</span> animales
                     </span>
+                    <span v-if="selectedAnimals.length > 0" class="text-sm text-blue-600 font-medium">
+                        <i class="fas fa-check-square mr-1"></i>
+                        {{ selectedAnimals.length }} seleccionados
+                    </span>
                     <span v-if="hasChanges" class="text-sm text-orange-600 font-medium">
                         <i class="fas fa-exclamation-circle mr-1"></i>
                         Cambios sin guardar
                     </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Actions Menu -->
+        <div v-if="selectedAnimals.length > 0" class="px-6 py-3 bg-blue-50 border-b border-blue-200">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-tasks text-blue-600"></i>
+                    <span class="text-sm font-medium text-blue-900">
+                        Acciones para {{ selectedAnimals.length }} animal{{ selectedAnimals.length > 1 ? 'es' : '' }} seleccionado{{ selectedAnimals.length > 1 ? 's' : '' }}
+                    </span>
+                </div>
+                <div class="flex space-x-3">
+                    <button
+                        @click="createAnimalGroup"
+                        class="inline-flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                    >
+                        <i class="fas fa-layer-group mr-2"></i>
+                        Crear Grupo
+                    </button>
+                    <button
+                        @click="confirmBulkDelete"
+                        class="inline-flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                    >
+                        <i class="fas fa-trash mr-2"></i>
+                        Eliminar Seleccionados
+                    </button>
+                    <button
+                        @click="clearSelection"
+                        class="inline-flex items-center px-3 py-2 bg-gray-500 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                    >
+                        <i class="fas fa-times mr-2"></i>
+                        Cancelar
+                    </button>
                 </div>
             </div>
         </div>
@@ -64,6 +103,15 @@
                 <!-- Table Header -->
                 <thead class="bg-gray-50">
                     <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+                            <input
+                                type="checkbox"
+                                :checked="isAllSelected"
+                                :indeterminate="isIndeterminate"
+                                @change="toggleSelectAll"
+                                class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                            />
+                        </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
                             #
                         </th>
@@ -93,10 +141,22 @@
                         :class="{ 
                             'bg-green-50': animal.isNew,
                             'bg-yellow-50': animal.isModified && !animal.isNew,
-                            'bg-red-50': animal.hasErrors
+                            'bg-red-50': animal.hasErrors,
+                            'bg-blue-50': isSelected(animal)
                         }"
                         class="hover:bg-gray-50 transition-colors duration-200"
                     >
+                        <!-- Checkbox -->
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <input
+                                type="checkbox"
+                                :checked="isSelected(animal)"
+                                @change="toggleSelection(animal)"
+                                :disabled="animal.isNew"
+                                class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                            />
+                        </td>
+
                         <!-- Row Number -->
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ index + 1 }}
@@ -159,7 +219,7 @@
                                     :href="route('animals.show', animal.id)"
                                     class="text-blue-600 hover:text-blue-900 transition-colors duration-200"
                                     title="Ver detalles"
-                                >
+                                >Ver
                                     <i class="fas fa-eye"></i>
                                 </Link>
 
@@ -187,7 +247,7 @@
 
                     <!-- Empty State -->
                     <tr v-if="filteredAnimals.length === 0">
-                        <td colspan="5" class="px-6 py-12 text-center">
+                        <td colspan="6" class="px-6 py-12 text-center">
                             <div class="text-gray-500">
                                 <i class="fas fa-cow text-4xl mb-4"></i>
                                 <h3 class="text-lg font-medium mb-2">No hay animales registrados</h3>
@@ -214,8 +274,14 @@
                     <h3 class="text-lg font-semibold text-gray-900">Confirmar Eliminación</h3>
                 </div>
                 <p class="text-gray-600 mb-6">
-                    ¿Estás seguro de que deseas eliminar el animal con caravana <strong>{{ animalToDelete?.caravana }}</strong>? 
-                    Esta acción no se puede deshacer.
+                    <span v-if="bulkDeleteMode">
+                        ¿Estás seguro de que deseas eliminar <strong>{{ selectedAnimals.length }} animal{{ selectedAnimals.length > 1 ? 'es' : '' }}</strong>? 
+                        Esta acción no se puede deshacer.
+                    </span>
+                    <span v-else>
+                        ¿Estás seguro de que deseas eliminar el animal con caravana <strong>{{ animalToDelete?.caravana }}</strong>? 
+                        Esta acción no se puede deshacer.
+                    </span>
                 </p>
                 <div class="flex space-x-3">
                     <button
@@ -225,10 +291,58 @@
                         Cancelar
                     </button>
                     <button
-                        @click="deleteAnimal"
+                        @click="bulkDeleteMode ? executeBulkDelete() : deleteAnimal()"
                         class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200"
                     >
                         Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Group Modal -->
+        <div v-if="showGroupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                <div class="flex items-center space-x-3 mb-4">
+                    <i class="fas fa-layer-group text-green-600 text-2xl"></i>
+                    <h3 class="text-lg font-semibold text-gray-900">Crear Grupo de Animales</h3>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    Crear un grupo con <strong>{{ selectedAnimals.length }} animal{{ selectedAnimals.length > 1 ? 'es' : '' }}</strong> seleccionado{{ selectedAnimals.length > 1 ? 's' : '' }}.
+                </p>
+                <div class="mb-4">
+                    <label for="groupName" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre del Grupo
+                    </label>
+                    <input
+                        id="groupName"
+                        v-model="groupName"
+                        type="text"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        placeholder="Ingrese el nombre del grupo"
+                    />
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle text-yellow-600 mr-2"></i>
+                        <p class="text-sm text-yellow-700">
+                            Esta funcionalidad estará disponible próximamente en el backend.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <button
+                        @click="cancelCreateGroup"
+                        class="flex-1 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium rounded-lg transition-colors duration-200"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        @click="executeCreateGroup"
+                        :disabled="!groupName.trim()"
+                        class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200"
+                    >
+                        Crear Grupo
                     </button>
                 </div>
             </div>
@@ -269,10 +383,14 @@ const emit = defineEmits(['animalAdded', 'animalUpdated', 'animalDeleted'])
 // Reactive data
 const searchTerm = ref('')
 const showDeleteModal = ref(false)
+const showGroupModal = ref(false)
 const animalToDelete = ref(null)
 const deleteIndex = ref(null)
 const loading = ref(false)
 const animalsData = ref([])
+const selectedAnimals = ref([])
+const bulkDeleteMode = ref(false)
+const groupName = ref('')
 
 // Computed properties
 const filteredAnimals = computed(() => {
@@ -288,6 +406,20 @@ const hasChanges = computed(() => {
     return animalsData.value.some(animal => animal.isNew || animal.isModified)
 })
 
+const selectableAnimals = computed(() => {
+    return filteredAnimals.value.filter(animal => !animal.isNew)
+})
+
+const isAllSelected = computed(() => {
+    return selectableAnimals.value.length > 0 && 
+           selectedAnimals.value.length === selectableAnimals.value.length
+})
+
+const isIndeterminate = computed(() => {
+    return selectedAnimals.value.length > 0 && 
+           selectedAnimals.value.length < selectableAnimals.value.length
+})
+
 // Methods
 const initializeData = () => {
     animalsData.value = props.animals.map(animal => ({
@@ -298,6 +430,7 @@ const initializeData = () => {
         errors: {},
         originalData: { ...animal }
     }))
+    selectedAnimals.value = []
 }
 
 const addNewRow = () => {
@@ -332,6 +465,109 @@ const formatDate = (dateString) => {
         month: 'short',
         day: 'numeric'
     })
+}
+
+// Selection methods
+const isSelected = (animal) => {
+    return selectedAnimals.value.some(selected => selected.id === animal.id)
+}
+
+const toggleSelection = (animal) => {
+    if (animal.isNew) return // Can't select new animals
+    
+    const index = selectedAnimals.value.findIndex(selected => selected.id === animal.id)
+    if (index > -1) {
+        selectedAnimals.value.splice(index, 1)
+    } else {
+        selectedAnimals.value.push(animal)
+    }
+}
+
+const toggleSelectAll = () => {
+    if (isAllSelected.value) {
+        selectedAnimals.value = []
+    } else {
+        selectedAnimals.value = [...selectableAnimals.value]
+    }
+}
+
+const clearSelection = () => {
+    selectedAnimals.value = []
+}
+
+// Bulk actions
+const confirmBulkDelete = () => {
+    if (selectedAnimals.value.length === 0) return
+    bulkDeleteMode.value = true
+    showDeleteModal.value = true
+}
+
+const executeBulkDelete = async () => {
+    if (selectedAnimals.value.length === 0) return
+
+    loading.value = true
+
+    try {
+        const animalIds = selectedAnimals.value.map(animal => animal.id)
+        
+        // Delete each animal
+        const deletePromises = animalIds.map(id => 
+            axios.delete(route('animals.destroy', id))
+        )
+
+        const responses = await Promise.all(deletePromises)
+        
+        // Check if all deletions were successful
+        const allSuccessful = responses.every(response => response.data.success)
+        
+        if (allSuccessful) {
+            // Remove deleted animals from the data
+            animalsData.value = animalsData.value.filter(animal => 
+                !animalIds.includes(animal.id)
+            )
+            
+            // Clear selection
+            selectedAnimals.value = []
+            
+            // Emit events
+            animalIds.forEach(id => emit('animalDeleted', id))
+            
+            showNotification(`${animalIds.length} animal${animalIds.length > 1 ? 'es' : ''} eliminado${animalIds.length > 1 ? 's' : ''} correctamente`, 'success')
+        }
+    } catch (error) {
+        showNotification(error.response?.data?.message || 'Error al eliminar los animales seleccionados', 'error')
+    } finally {
+        loading.value = false
+        cancelDelete()
+    }
+}
+
+const createAnimalGroup = () => {
+    if (selectedAnimals.value.length === 0) return
+    groupName.value = ''
+    showGroupModal.value = true
+}
+
+const executeCreateGroup = () => {
+    if (!groupName.value.trim()) return
+
+    // For now, just show a notification that this feature is coming soon
+    showNotification(`Funcionalidad de grupos en desarrollo. Grupo "${groupName.value}" con ${selectedAnimals.value.length} animales será creado próximamente.`, 'info')
+    
+    // TODO: Implement backend functionality for animal groups
+    // const groupData = {
+    //     name: groupName.value,
+    //     animal_ids: selectedAnimals.value.map(animal => animal.id),
+    //     rodeo_id: props.rodeoId
+    // }
+    // await axios.post(route('animal-groups.store'), groupData)
+    
+    cancelCreateGroup()
+}
+
+const cancelCreateGroup = () => {
+    showGroupModal.value = false
+    groupName.value = ''
 }
 
 const saveIndividual = async (animal, index) => {
@@ -407,12 +643,14 @@ const cancelChanges = (animal, index) => {
 const confirmDelete = (animal, index) => {
     animalToDelete.value = animal
     deleteIndex.value = index
+    bulkDeleteMode.value = false
     showDeleteModal.value = true
 }
 
 const cancelDelete = () => {
     animalToDelete.value = null
     deleteIndex.value = null
+    bulkDeleteMode.value = false
     showDeleteModal.value = false
 }
 
@@ -431,6 +669,13 @@ const deleteAnimal = async () => {
             
             if (response.data.success) {
                 animalsData.value.splice(deleteIndex.value, 1)
+                
+                // Remove from selection if it was selected
+                const selectionIndex = selectedAnimals.value.findIndex(selected => selected.id === animalToDelete.value.id)
+                if (selectionIndex > -1) {
+                    selectedAnimals.value.splice(selectionIndex, 1)
+                }
+                
                 emit('animalDeleted', animalToDelete.value.id)
                 showNotification(response.data.message, 'success')
             }
@@ -445,7 +690,6 @@ const deleteAnimal = async () => {
 
 const showNotification = (message, type = 'info') => {
     // Simple notification - you can replace with a proper toast library
-    // For now we'll use a simple alert, but you can implement a toast system
     console.log(`${type}: ${message}`)
     // alert(message) // Uncomment if you want alerts
 }
@@ -456,7 +700,6 @@ onMounted(() => {
 })
 
 // Watch for prop changes
-// If animals prop changes, reinitialize
 import { watch } from 'vue'
 watch(() => props.animals, () => {
     initializeData()
@@ -494,5 +737,12 @@ watch(() => props.animals, () => {
 
 .overflow-x-auto::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
+}
+
+/* Indeterminate checkbox styling */
+input[type="checkbox"]:indeterminate {
+    background-color: #10b981;
+    border-color: #10b981;
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M3 8h10'/%3e%3c/svg%3e");
 }
 </style>
