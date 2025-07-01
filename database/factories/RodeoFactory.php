@@ -17,7 +17,11 @@ class RodeoFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->company() . ' Rodeo',
+            'location' => $this->faker->city() . ', ' . $this->faker->state(),
+            'description' => $this->faker->paragraph(),
+            'renspa' => $this->faker->numerify('RENSPA-####'),
+            'client_id' => \App\Models\Client::factory(),
         ];
     }
 }

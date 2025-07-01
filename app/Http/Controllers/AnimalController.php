@@ -101,36 +101,7 @@ class AnimalController extends Controller
             ], 422);
         }
     }
-    /**
-     * Delete multiple animals at once
-     */
-    public function bulkDestroy(Request $request)
-    {
-        try {
-            $animalIds = $request->validate([
-                'animal_ids' => 'required|array',
-                'animal_ids.*' => 'exists:animals,id'
-            ]);
-
-            $deletedCount = 0;
-            foreach ($animalIds['animal_ids'] as $id) {
-                if ($this->animalService->delete($id)) {
-                    $deletedCount++;
-                }
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => "{$deletedCount} animal" . ($deletedCount > 1 ? 'es' : '') . " eliminado" . ($deletedCount > 1 ? 's' : '') . " correctamente.",
-                'deleted_count' => $deletedCount
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al eliminar los animales: ' . $e->getMessage()
-            ], 422);
-        }
-    }
+    
 
 
     // Mantener los métodos originales para compatibilidad
