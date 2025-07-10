@@ -12,9 +12,13 @@ class Group extends Model
 
 
     protected $fillable = [
-        'rodeo_id',
-        'animal_id',
         'name',
         'description',
     ];
+
+    public function rodeo()
+    {
+        return $this->belongsTo(Rodeo::class);
+    }   
+    
 }
