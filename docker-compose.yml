@@ -1,0 +1,50 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rodeo-app
+    restart: unless-stopped
+    networks:
+      - rodeo-network
+    depends_on:
+      - mysql  # Changed from rodeo-db to mysql
+    volumes:
+      - .:/var/www/html  # Add volume for your Laravel app
+
+  mysql:
+    image: mysql:8.0
+    container_name: rodeo-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: rodeo_db
+      MYSQL_USER: rodeo_user
+      MYSQL_PASSWORD: rodeo_password
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3309:3306"  
+    networks:
+      - rodeo-network
+
+  server:
+    image: nginx:latest
+    container_name: rodeo-server
+    restart: unless-stopped
+    ports:
+      - "9001:80"
+    volumes:
+      - .:/var/www/html  # Add Laravel app volume
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf  # Fixed path
+    networks:
+      - rodeo-network
+    depends_on:
+      - app
+
+volumes:
+  db_data:
+
+networks:
+  rodeo-network:
+    driver: bridge

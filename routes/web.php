@@ -4,6 +4,10 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\RodeoController;
+use App\Http\Controllers\AnimalController;
+
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -21,4 +25,10 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    Route::resource('clients', ClientController::class);
+    Route::resource('rodeos', RodeoController::class);
+    Route::resource('animals', AnimalController::class);
+    Route::delete('animals/bulk-destroy', [AnimalController::class, 'bulkDestroy'])->name('animals.bulkDestroy');
+   
 });
