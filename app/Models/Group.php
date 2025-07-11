@@ -16,9 +16,7 @@ class Group extends Model
         'description',
     ];
 
-    public function rodeo()
-    {
-        return $this->belongsTo(Rodeo::class);
-    }   
-    
+    public function Animals(){
+        return $this->belongsToMany(Animal::class);
+    }
 }

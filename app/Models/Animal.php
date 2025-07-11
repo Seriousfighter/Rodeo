@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Rodeo;
+
 
 class Animal extends Model
 {
@@ -18,5 +20,8 @@ class Animal extends Model
     public function rodeo()
     {
         return $this->belongsTo(Rodeo::class);
+    }
+    public function Groups (){
+        return $this->belongsToMany(Group::class);
     }
 }
