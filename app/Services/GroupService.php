@@ -22,7 +22,7 @@ class GroupService implements GroupInterface
                 'name' => $data['name'],
                 'description' => $data['description'] ?? null,
             ]);
-
+            
             // Add animals if provided
             if (isset($data['animals']) && is_array($data['animals'])) {
                 $group->Animals()->attach($data['animals']);

@@ -523,7 +523,7 @@ const executeBulkDelete = async () => {
         if (allSuccessful) {
             // Remove deleted animals from the data
             animalsData.value = animalsData.value.filter(animal => 
-                !animalIds.includes(animal.id)
+                !animalIds.includes(ananimal.id)
             )
             
             // Clear selection
@@ -548,21 +548,36 @@ const createAnimalGroup = () => {
     showGroupModal.value = true
 }
 
-const executeCreateGroup = () => {
+const executeCreateGroup = async () => {
     if (!groupName.value.trim()) return
 
-    // For now, just show a notification that this feature is coming soon
-    showNotification(`Funcionalidad de grupos en desarrollo. Grupo "${groupName.value}" con ${selectedAnimals.value.length} animales será creado próximamente.`, 'info')
-    
-    // TODO: Implement backend functionality for animal groups
-    // const groupData = {
-    //     name: groupName.value,
-    //     animal_ids: selectedAnimals.value.map(animal => animal.id),
-    //     rodeo_id: props.rodeoId
-    // }
-    // await axios.post(route('animal-groups.store'), groupData)
-    
-    cancelCreateGroup()
+    loading.value = true
+
+    try {
+        const groupData = {
+            name: groupName.value,
+            animals: selectedAnimals.value.map(animal => animal.id), // ← Changed from animal_ids to animals
+            rodeo_id: props.rodeoId
+        }
+
+        const response = await axios.post(route('groups.store'), groupData)
+        
+        if (response.data.success) {
+            showNotification(`Grupo "${groupName.value}" creado exitosamente con ${selectedAnimals.value.length} animales`, 'success')
+            
+            // Clear selection and close modal
+            selectedAnimals.value = []
+            cancelCreateGroup()
+            
+            // Emit event if needed
+            // emit('groupCreated', response.data.data)
+        }
+    } catch (error) {
+        showNotification(error.response?.data?.message || 'Error al crear el grupo', 'error')
+        console.error('Error creating group:', error)
+    } finally {
+        loading.value = false
+    }
 }
 
 const cancelCreateGroup = () => {
