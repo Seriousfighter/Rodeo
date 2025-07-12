@@ -363,6 +363,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Link } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3'
 import axios from 'axios'
 
 // Props
@@ -523,7 +524,7 @@ const executeBulkDelete = async () => {
         if (allSuccessful) {
             // Remove deleted animals from the data
             animalsData.value = animalsData.value.filter(animal => 
-                !animalIds.includes(animal.id)
+                !animalIds.includes(ananimal.id)
             )
             
             // Clear selection
@@ -548,21 +549,38 @@ const createAnimalGroup = () => {
     showGroupModal.value = true
 }
 
-const executeCreateGroup = () => {
+const executeCreateGroup = async () => {
     if (!groupName.value.trim()) return
 
-    // For now, just show a notification that this feature is coming soon
-    showNotification(`Funcionalidad de grupos en desarrollo. Grupo "${groupName.value}" con ${selectedAnimals.value.length} animales será creado próximamente.`, 'info')
-    
-    // TODO: Implement backend functionality for animal groups
-    // const groupData = {
-    //     name: groupName.value,
-    //     animal_ids: selectedAnimals.value.map(animal => animal.id),
-    //     rodeo_id: props.rodeoId
-    // }
-    // await axios.post(route('animal-groups.store'), groupData)
-    
-    cancelCreateGroup()
+    const groupData = {
+        name: groupName.value,
+        animals: selectedAnimals.value.map(animal => animal.id),
+        rodeo_id: props.rodeoId
+    }
+    console.log('Creating group with data:', groupData);
+    router.post(route('groups.store'), groupData, {
+        onStart: () => {
+            loading.value = true
+        },
+        onSuccess: (page) => {
+            showNotification(`Grupo "${groupName.value}" creado exitosamente con ${selectedAnimals.value.length} animales`, 'success')
+            
+            // Clear selection and close modal
+            selectedAnimals.value = []
+            cancelCreateGroup()
+            
+            // Emit event if needed
+            // emit('groupCreated', page.props.group)
+        },
+        onError: (errors) => {
+            const errorMessage = errors.message || 'Error al crear el grupo'
+            showNotification(errorMessage, 'error')
+            console.error('Error creating group:', errors)
+        },
+        onFinish: () => {
+            loading.value = false
+        }
+    })
 }
 
 const cancelCreateGroup = () => {

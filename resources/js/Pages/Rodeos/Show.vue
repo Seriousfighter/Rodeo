@@ -180,6 +180,13 @@
                                 <i class="fas fa-user mr-2"></i>
                                 Ver Cliente
                             </Link>
+                            <Link 
+                                :href="route('rodeo.groups', rodeo.id)"
+                                class="w-full inline-flex items-center justify-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-lg transition-colors duration-200"
+                            >
+                                <i class="fas fa-edit mr-2"></i>
+                                Ver Grupos
+                            </Link>
 
                             <button
                                 @click="confirmDelete"

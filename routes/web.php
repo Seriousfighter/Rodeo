@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\RodeoController;
 use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\GroupController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -29,6 +30,11 @@ Route::middleware([
     Route::resource('clients', ClientController::class);
     Route::resource('rodeos', RodeoController::class);
     Route::resource('animals', AnimalController::class);
-    Route::delete('animals/bulk-destroy', [AnimalController::class, 'bulkDestroy'])->name('animals.bulkDestroy');
+    Route::resource('groups', GroupController::class);
+    Route::post('groups/{id}/animals', [GroupController::class, 'addAnimals']);
+    Route::delete('groups/{id}/animals', [GroupController::class, 'removeAnimals']);
+    Route::get('groups/{id}/index', [GroupController::class, 'rodeoGroups'])->name('rodeo.groups');
+
+    //Route::delete('animals/bulk-destroy', [AnimalController::class, 'bulkDestroy'])->name('animals.bulkDestroy');
    
 });
