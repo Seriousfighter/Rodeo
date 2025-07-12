@@ -60,7 +60,7 @@
                                                 @click="editGroup(group)"
                                                 class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors duration-200"
                                                 title="Editar grupo"
-                                            >
+                                            >Editar
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             <button
@@ -68,7 +68,8 @@
                                                 class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors duration-200"
                                                 title="Eliminar grupo"
                                             >
-                                                <i class="fas fa-trash"></i>
+                                                <i class="fas fa-trash mr-1"></i>
+                                                Eliminar
                                             </button>
                                         </div>
                                     </div>
