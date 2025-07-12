@@ -363,6 +363,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Link } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3'
 import axios from 'axios'
 
 // Props
@@ -551,18 +552,17 @@ const createAnimalGroup = () => {
 const executeCreateGroup = async () => {
     if (!groupName.value.trim()) return
 
-    loading.value = true
-
-    try {
-        const groupData = {
-            name: groupName.value,
-            animals: selectedAnimals.value.map(animal => animal.id), // ← Changed from animal_ids to animals
-            rodeo_id: props.rodeoId
-        }
-
-        const response = await axios.post(route('groups.store'), groupData)
-        
-        if (response.data.success) {
+    const groupData = {
+        name: groupName.value,
+        animals: selectedAnimals.value.map(animal => animal.id),
+        rodeo_id: props.rodeoId
+    }
+    console.log('Creating group with data:', groupData);
+    router.post(route('groups.store'), groupData, {
+        onStart: () => {
+            loading.value = true
+        },
+        onSuccess: (page) => {
             showNotification(`Grupo "${groupName.value}" creado exitosamente con ${selectedAnimals.value.length} animales`, 'success')
             
             // Clear selection and close modal
@@ -570,14 +570,17 @@ const executeCreateGroup = async () => {
             cancelCreateGroup()
             
             // Emit event if needed
-            // emit('groupCreated', response.data.data)
+            // emit('groupCreated', page.props.group)
+        },
+        onError: (errors) => {
+            const errorMessage = errors.message || 'Error al crear el grupo'
+            showNotification(errorMessage, 'error')
+            console.error('Error creating group:', errors)
+        },
+        onFinish: () => {
+            loading.value = false
         }
-    } catch (error) {
-        showNotification(error.response?.data?.message || 'Error al crear el grupo', 'error')
-        console.error('Error creating group:', error)
-    } finally {
-        loading.value = false
-    }
+    })
 }
 
 const cancelCreateGroup = () => {

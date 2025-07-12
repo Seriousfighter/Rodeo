@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
 use App\Services\Interfaces\GroupInterface;
+use App\Services\Interfaces\RodeoInterface;
+
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -13,17 +15,35 @@ use Illuminate\Support\Facades\Log;
 class GroupController extends Controller
 {
     protected $groupService;
-
-    public function __construct(GroupInterface $groupService)
+    protected RodeoInterface $rodeoService;
+    public function __construct(RodeoInterface $rodeoService, GroupInterface $groupService)
     {
         $this->groupService = $groupService;
+        $this->rodeoService = $rodeoService;
     }
 
     /**
      * Display a listing of the resource.
      */
     public function index(){}
-       
+    
+    public function rodeoGroups(int $id)
+    {
+        
+        try {
+
+            $groups = $this->groupService->findByRodeoId($id);
+            
+            return inertia()->render('Rodeos/Groups', [
+                'groups' => $groups,
+                'rodeoId' => $id
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors([
+                'error' => 'Error al cargar los grupos del rodeo: ' . $e->getMessage()
+            ]);
+        }
+    }
     
 
     /**
@@ -33,19 +53,18 @@ class GroupController extends Controller
     {
         Log::info('Group store request data:', $request->validated());
         
+        //dd($request->validated());
         try {
             $group = $this->groupService->store($request->validated());
             
-            return response()->json([
+            return redirect()->back()->with([
                 'success' => true,
-                'data' => $group,
                 'message' => 'Grupo creado exitosamente'
-            ], 201);
+            ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al crear el grupo: ' . $e->getMessage()
-            ], 500);
+           return redirect()->back()->withErrors([
+                'error' => 'Error al crear el grupo: ' . $e->getMessage() . json_encode($request->validated())
+            ])->withInput();
         }
     }
 

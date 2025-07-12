@@ -21,6 +21,7 @@ class GroupService implements GroupInterface
             $group = Group::create([
                 'name' => $data['name'],
                 'description' => $data['description'] ?? null,
+                'rodeo_id'=> $data['rodeo_id'],
             ]);
             
             // Add animals if provided
@@ -51,6 +52,7 @@ class GroupService implements GroupInterface
             $group->update([
                 'name' => $data['name'] ?? $group->name,
                 'description' => $data['description'] ?? $group->description,
+                'rodeo_id' => $data['rodeo_id'] ?? $group->rodeo_id,
             ]);
 
             // Update animals if provided
@@ -114,6 +116,22 @@ class GroupService implements GroupInterface
     public function findById($id)
     {
         return Group::with('Animals')->find($id);
+    }
+    public function findByRodeoId($rodeoId)
+    {
+        $groups = Group::with('Animals')
+            ->where('rodeo_id', $rodeoId)
+            ->get();
+        try{
+            return Group::with('Animals')
+                ->where('rodeo_id', $rodeoId)
+                ->get();
+        } catch (\Exception $e) {
+            dd('error aca');
+            return null; // Handle the exception as needed
+        }
+       
+       
     }
 
     /**

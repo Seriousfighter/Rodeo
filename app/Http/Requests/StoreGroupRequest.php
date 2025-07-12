@@ -26,7 +26,7 @@ class StoreGroupRequest extends FormRequest
             'description' => 'nullable|string|max:1000',
             'animals' => 'nullable|array',
             'animals.*' => 'exists:animals,id',
-            'rodeo_id' => 'nullable|exists:rodeos,id'
+            'rodeo_id' => 'required|exists:rodeos,id'
         ];
     }
 
@@ -45,7 +45,8 @@ class StoreGroupRequest extends FormRequest
             'description.max' => 'La descripción no puede exceder los 1000 caracteres.',
             'animals.array' => 'Los animales deben ser un arreglo.',
             'animals.*.exists' => 'Uno o más animales seleccionados no existen.',
-            'rodeo_id.exists' => 'El rodeo seleccionado no existe.'
+            'rodeo_id.exists' => 'El rodeo seleccionado no existe.',
+            'rodeo_id.required' => 'El rodeo es obligatorio.'
         ];
     }
 }

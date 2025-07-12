@@ -86,4 +86,6 @@ interface GroupInterface
      * @return bool
      */
     public function replaceAnimals($groupId, array $animalIds);
+
+    public function findByRodeoId($rodeoId);
 }
