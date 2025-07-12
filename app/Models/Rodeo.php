@@ -28,4 +28,8 @@ class Rodeo extends Model
     {
         return $this->hasMany(Animal::class);
     }
+    public function groups()
+    {
+        return $this->hasMany(Group::class);
+    }
 }

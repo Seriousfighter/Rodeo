@@ -33,6 +33,7 @@ Route::middleware([
     Route::resource('groups', GroupController::class);
     Route::post('groups/{id}/animals', [GroupController::class, 'addAnimals']);
     Route::delete('groups/{id}/animals', [GroupController::class, 'removeAnimals']);
+    Route::get('groups/{id}/index', [GroupController::class, 'rodeoGroups'])->name('rodeo.groups');
 
     //Route::delete('animals/bulk-destroy', [AnimalController::class, 'bulkDestroy'])->name('animals.bulkDestroy');
    

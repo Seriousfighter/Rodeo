@@ -14,9 +14,13 @@ class Group extends Model
     protected $fillable = [
         'name',
         'description',
+        'rodeo_id',
     ];
 
     public function Animals(){
         return $this->belongsToMany(Animal::class);
+    }
+    public function rodeo(){
+        return $this->belongsToMany(Rodeo::class);
     }
 }
