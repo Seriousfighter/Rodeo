@@ -34,7 +34,7 @@ class GroupController extends Controller
 
             $groups = $this->groupService->findByRodeoId($id);
             
-            return inertia()->render('Rodeos/Groups', [
+            return inertia()->render('Groups/Index', [
                 'groups' => $groups,
                 'rodeoId' => $id
             ]);
