@@ -1,20 +1,39 @@
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  # Tu aplicación Laravel existente
+  rodeo-app:
+    build: .
     container_name: rodeo-app
     restart: unless-stopped
     networks:
-      - rodeo-network
+      - app-network
     depends_on:
-      - mysql  # Changed from rodeo-db to mysql
+      - rodeo-db  # Changed from mysql to rodeo-db
+      - recording-api
+    environment:
+      - RECORDING_API_URL=http://recording-api:3000
+      - RECORDING_API_SECRET=tu_clave_secreta_aqui
     volumes:
-      - .:/var/www/html  # Add volume for your Laravel app
+      - ./RodeoV2:/var/www/html
 
-  mysql:
+  # Nginx service for Laravel
+  nginx:
+    image: nginx:latest
+    container_name: rodeo-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    networks:
+      - app-network
+    depends_on:
+      - rodeo-app
+    volumes:
+      - ./RodeoV2:/var/www/html
+      - ./RodeoV2/nginx/default.conf:/etc/nginx/conf.d/default.conf
+
+  # Tu MySQL existente - RENAMED SERVICE
+  rodeo-db:  # Changed from mysql to rodeo-db
     image: mysql:8.0
-    container_name: rodeo-db
+    container_name: rodeo-mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root_password
@@ -22,29 +41,45 @@ services:
       MYSQL_USER: rodeo_user
       MYSQL_PASSWORD: rodeo_password
     volumes:
-      - db_data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     ports:
-      - "3309:3306"  
+      - "3309:3306"
     networks:
-      - rodeo-network
+      - app-network
 
-  server:
-    image: nginx:latest
-    container_name: rodeo-server
+  # Nueva API Express
+  recording-api:
+    build: ./RecordingApi
+    container_name: recording-api
     restart: unless-stopped
-    ports:
-      - "9001:80"
-    volumes:
-      - .:/var/www/html  # Add Laravel app volume
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf  # Fixed path
+    expose:
+      - "3000"
     networks:
-      - rodeo-network
+      - app-network
     depends_on:
-      - app
+      - mongodb
+    environment:
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongodb:27017/animal_recordings
+      - ALLOWED_ORIGINS=http://rodeo-app:9000
+      - API_SECRET=tu_clave_secreta_aqui
 
-volumes:
-  db_data:
+  # Nueva base de datos MongoDB
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    container_name: rodeo-mongodb
+    restart: unless-stopped
+    expose:
+      - "27017"
+    networks:
+      - app-network
+    volumes:
+      - mongodb_data:/data/db
 
 networks:
-  rodeo-network:
+  app-network:
     driver: bridge
+
+volumes:
+  mongodb_data:
+  mysql_data:
