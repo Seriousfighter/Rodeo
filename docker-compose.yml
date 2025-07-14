@@ -13,7 +13,7 @@ services:
       - RECORDING_API_URL=http://recording-api:3000
       - RECORDING_API_SECRET=tu_clave_secreta_aqui
     volumes:
-      - ./RodeoV2:/var/www/html
+      - .:/var/www/html
 
   # Nginx service for Laravel
   nginx:
@@ -27,8 +27,8 @@ services:
     depends_on:
       - rodeo-app
     volumes:
-      - ./RodeoV2:/var/www/html
-      - ./RodeoV2/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
 
   # Tu MySQL existente - RENAMED SERVICE
   rodeo-db:  # Changed from mysql to rodeo-db
