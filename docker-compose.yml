@@ -1,5 +1,5 @@
 services:
-  # Tu aplicación Laravel existente
+  # Rodeo application service
   rodeo-app:
     build: .
     container_name: rodeo-app
@@ -7,7 +7,7 @@ services:
     networks:
       - app-network
     depends_on:
-      - rodeo-db  # Changed from mysql to rodeo-db
+      - rodeo-db  
       - recording-api
     environment:
       - RECORDING_API_URL=http://recording-api:3000
@@ -15,7 +15,7 @@ services:
     volumes:
       - .:/var/www/html
 
-  # Nginx service for Laravel
+  # Nginx service for Rodeo
   nginx:
     image: nginx:latest
     container_name: rodeo-nginx
@@ -30,8 +30,8 @@ services:
       - .:/var/www/html
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
 
-  # Tu MySQL existente - RENAMED SERVICE
-  rodeo-db:  # Changed from mysql to rodeo-db
+  # mysql service for Rodeo
+  rodeo-db:  
     image: mysql:8.0
     container_name: rodeo-mysql
     restart: unless-stopped
@@ -47,7 +47,7 @@ services:
     networks:
       - app-network
 
-  # Nueva API Express
+  # Recording API Express
   recording-api:
     build: ./RecordingApi
     container_name: recording-api
@@ -64,7 +64,7 @@ services:
       - ALLOWED_ORIGINS=http://rodeo-app:9000
       - API_SECRET=tu_clave_secreta_aqui
 
-  # Nueva base de datos MongoDB
+  # MOngoDB service for Recording API
   mongodb:
     image: mongodb/mongodb-community-server:latest
     container_name: rodeo-mongodb
