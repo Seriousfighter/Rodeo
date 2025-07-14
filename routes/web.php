@@ -8,6 +8,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\RodeoController;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\RecordingController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -36,5 +37,9 @@ Route::middleware([
     Route::get('groups/{id}/index', [GroupController::class, 'rodeoGroups'])->name('rodeo.groups');
 
     //Route::delete('animals/bulk-destroy', [AnimalController::class, 'bulkDestroy'])->name('animals.bulkDestroy');
+
+    //recording routes
+     Route::resource('recordings', RecordingController::class);
+    
    
 });
