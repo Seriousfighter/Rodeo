@@ -91,13 +91,14 @@
                             </p>
                         </div>
 
-                        <!-- Veterinarian ID Field -->
+                        <!-- Veterinarian ID Field 
                         <div>
                             <label for="veterinarian_id" class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fas fa-user-md text-gray-400 mr-1"></i>
                                 Veterinario ID *
                             </label>
                             <input
+                                disabled
                                 id="veterinarian_id"
                                 v-model="form.veterinarian_id"
                                 type="number"
@@ -110,7 +111,8 @@
                                 <i class="fas fa-exclamation-circle mr-1"></i>
                                 {{ errors.veterinarian_id }}
                             </p>
-                        </div>
+                        </div> 
+                        -->
 
                         <!-- Status Field -->
                         <div>
@@ -134,7 +136,7 @@
                             </p>
                         </div>
 
-                        <!-- Recording Time Field -->
+                        <!-- Recording Time Field 
                         <div>
                             <label for="recording_time" class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fas fa-clock text-gray-400 mr-1"></i>
@@ -151,8 +153,8 @@
                                 <i class="fas fa-exclamation-circle mr-1"></i>
                                 {{ errors.recording_time }}
                             </p>
-                        </div>
-                    </div>
+                        </div>-->
+                    </div> 
 
                     <!-- Recording Data Section -->
                     <div class="mt-8 pt-6 border-t border-gray-200">
@@ -374,7 +376,7 @@ const form = useForm({
     recording_date: props.recording?.recording_date ?? '',
     recording_time: props.recording?.recording_time ?? '',
     recording_type: props.recording?.recording_type ?? '',
-    veterinarian_id: props.recording?.veterinarian_id ?? '',
+    veterinarian_id: props.recording?.veterinarian_id ?? 1,
     status: props.recording?.status ?? 'pending',
     recording_data: {
         temperature: props.recording?.recording_data?.temperature ?? '',

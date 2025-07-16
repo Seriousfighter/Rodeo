@@ -218,13 +218,6 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex space-x-2">
                                 <button
-                                    @click="viewRecording(recording)"
-                                    class="text-blue-600 hover:text-blue-900 transition-colors duration-200"
-                                    title="Ver detalles"
-                                >View
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button
                                     @click="editRecording(recording)"
                                     class="text-green-600 hover:text-green-900 transition-colors duration-200"
                                     title="Editar"
@@ -244,7 +237,6 @@
                 </tbody>
             </table>
         </div>
-
         <!-- Pagination -->
         <div v-if="totalPages > 1" class="px-6 py-4 bg-gray-50 border-t border-gray-200">
             <div class="flex items-center justify-between">
@@ -358,7 +350,7 @@ const filters = ref({
 const availableColumns = [
     { key: 'recording_type', label: 'Tipo', icon: 'fas fa-stethoscope' },
     { key: 'recording_date', label: 'Fecha', icon: 'fas fa-calendar' },
-    { key: 'veterinarian_id', label: 'Veterinario', icon: 'fas fa-user-md' },
+    //{ key: 'veterinarian_id', label: 'Veterinario', icon: 'fas fa-user-md' },
     { key: 'status', label: 'Estado', icon: 'fas fa-flag' },
     { key: 'recording_data', label: 'Datos', icon: 'fas fa-database' },
     { key: 'notes', label: 'Notas', icon: 'fas fa-sticky-note' }
