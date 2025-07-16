@@ -7,6 +7,8 @@ use App\Http\Requests\UpdateAnimalRequest;
 use App\Models\Animal;
 use App\Services\Interfaces\AnimalInterface;
 use App\Services\Interfaces\RodeoInterface;
+use App\Services\RecordingApiService;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class AnimalController extends Controller
@@ -14,10 +16,13 @@ class AnimalController extends Controller
     protected AnimalInterface $animalService;
     protected RodeoInterface $rodeoService;
 
-    public function __construct(AnimalInterface $animalService, RodeoInterface $rodeoService)
+    protected RecordingApiService $recordingApiService;
+
+    public function __construct(AnimalInterface $animalService, RodeoInterface $rodeoService, RecordingApiService $recordingApiService)
     {
         $this->animalService = $animalService;
         $this->rodeoService = $rodeoService;
+        $this->recordingApiService = $recordingApiService;
     }
 
     /**
@@ -122,9 +127,21 @@ class AnimalController extends Controller
     public function show(Animal $animal)
     {
         try {
-            $animalData = $this->animalService->show($animal->id);
+            $animal = $this->animalService->show($animal->id);
+            
+            // Fetch recordings for this animal from MongoDB API
+            $recordings = [];
+            try {
+                $recordingsResponse = $this->recordingApiService->getByAnimal($animal->id);
+                $recordings = $recordingsResponse['success'] ? $recordingsResponse['data'] : [];
+            } catch (\Exception $e) {
+                // Log the error but don't fail the entire page
+                Log::warning("Failed to fetch recordings for animal {$animal->id}: " . $e->getMessage());
+            }
+            
             return Inertia::render('Animals/Show', [
-                'animal' => $animalData,
+                'animal' => $animal,
+                'recordings' => $recordings
             ]);
         } catch (\Exception $e) {
             return redirect()->route('animals.index')->withErrors([

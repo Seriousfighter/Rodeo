@@ -106,6 +106,24 @@
                             </p>
                         </div>
 
+                        <!-- Recording Date Field -->
+                        <div>
+                            <label for="recording_date" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-calendar-alt text-gray-400 mr-1"></i>
+                                Fecha del Registro *
+                            </label>
+                            <DatePicker
+                                v-model="form.recording_date"
+                                input-id="recording_date"
+                                placeholder="Seleccione la fecha del registro"
+                                :has-error="!!errors.recording_date"
+                                :error-message="errors.recording_date"
+                                date-format="DD-MM-YYYY"
+                            
+                                @change="onDateChange"
+                            />
+                        </div>
+
                         <!-- Recording Type Field -->
                         <div>
                             <label for="recording_type" class="block text-sm font-medium text-gray-700 mb-2">
@@ -174,6 +192,25 @@
                             <p v-if="errors.status" class="mt-2 text-sm text-red-600">
                                 <i class="fas fa-exclamation-circle mr-1"></i>
                                 {{ errors.status }}
+                            </p>
+                        </div>
+
+                        <!-- Recording Time Field -->
+                        <div>
+                            <label for="recording_time" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-clock text-gray-400 mr-1"></i>
+                                Hora del Registro
+                            </label>
+                            <input
+                                id="recording_time"
+                                v-model="form.recording_time"
+                                type="time"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
+                                :class="{ 'border-red-500 focus:ring-red-500 focus:border-red-500': errors.recording_time }"
+                            />
+                            <p v-if="errors.recording_time" class="mt-2 text-sm text-red-600">
+                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                {{ errors.recording_time }}
                             </p>
                         </div>
                     </div>
@@ -317,6 +354,12 @@
                         </span>
                     </div>
                     <div class="flex items-center space-x-3">
+                        <i class="fas fa-calendar-alt text-gray-400"></i>
+                        <span class="text-sm text-gray-600">
+                            <strong>Fecha:</strong> {{ form.recording_date }}
+                        </span>
+                    </div>
+                    <div class="flex items-center space-x-3">
                         <i class="fas fa-stethoscope text-gray-400"></i>
                         <span class="text-sm text-gray-600">
                             <strong>Tipo:</strong> {{ getRecordingTypeLabel(form.recording_type) }}
@@ -343,6 +386,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Link, router, useForm } from '@inertiajs/vue3'
+import DatePicker from '@/Components/DatePicker.vue'
 
 // Props
 const props = defineProps({
@@ -367,6 +411,8 @@ const form = useForm({
     animal_id: props.recording?.animal_id ?? '',
     rodeo_id: props.recording?.rodeo_id ?? '',
     client_id: props.recording?.client_id ?? '',
+    recording_date: props.recording?.recording_date ?? '',
+    recording_time: props.recording?.recording_time ?? '',
     recording_type: props.recording?.recording_type ?? '',
     veterinarian_id: props.recording?.veterinarian_id ?? '',
     status: props.recording?.status ?? 'pending',
@@ -399,6 +445,10 @@ const getStatusLabel = (status) => {
         'cancelled': 'Cancelado'
     }
     return labels[status] || status
+}
+
+const onDateChange = (date) => {
+    console.log('Selected date:', date)
 }
 
 const submitForm = () => {

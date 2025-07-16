@@ -55,6 +55,7 @@ class RecordingController extends Controller
 
     public function store(Request $request)
     {
+        //dd($request->all());
         try {
             $data = $request->validate([
                 'animal_id' => 'required|integer',
@@ -64,7 +65,8 @@ class RecordingController extends Controller
                 'recording_data' => 'required|array',
                 'veterinarian_id' => 'required|integer',
                 'notes' => 'nullable|string',
-                'status' => 'nullable|string'
+                'status' => 'nullable|string',
+                //'recording_date' => 'required|date_format:d-m-y'
             ]);
 
             $result = $this->recordingApi->store($data);
@@ -75,6 +77,7 @@ class RecordingController extends Controller
                 return back()->withErrors(['error' => $result['error'] ?? 'Error al crear el registro']);
             }
         } catch (\Exception $e) {
+            dd('error');
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
