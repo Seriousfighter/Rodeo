@@ -39,7 +39,8 @@ Route::middleware([
     //Route::delete('animals/bulk-destroy', [AnimalController::class, 'bulkDestroy'])->name('animals.bulkDestroy');
 
     //recording routes
-     Route::resource('recordings', RecordingController::class);
+     Route::resource('recordings', RecordingController::class)->except(['create']);
+     Route::get('recordings/create/{animalId}', [RecordingController::class, 'create'])->name('recordings.create');
     
    
 });

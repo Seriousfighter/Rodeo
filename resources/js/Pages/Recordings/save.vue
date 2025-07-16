@@ -43,68 +43,7 @@
                 <!-- Form -->
                 <form @submit.prevent="submitForm" class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Animal ID Field -->
-                        <div>
-                            <label for="animal_id" class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-cow text-gray-400 mr-1"></i>
-                                Animal ID *
-                            </label>
-                            <input
-                                id="animal_id"
-                                v-model="form.animal_id"
-                                type="number"
-                                required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
-                                :class="{ 'border-red-500 focus:ring-red-500 focus:border-red-500': errors.animal_id }"
-                                placeholder="Ingrese el ID del animal"
-                            />
-                            <p v-if="errors.animal_id" class="mt-2 text-sm text-red-600">
-                                <i class="fas fa-exclamation-circle mr-1"></i>
-                                {{ errors.animal_id }}
-                            </p>
-                        </div>
-
-                        <!-- Rodeo ID Field -->
-                        <div>
-                            <label for="rodeo_id" class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-clipboard-list text-gray-400 mr-1"></i>
-                                Rodeo ID *
-                            </label>
-                            <input
-                                id="rodeo_id"
-                                v-model="form.rodeo_id"
-                                type="number"
-                                required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
-                                :class="{ 'border-red-500 focus:ring-red-500 focus:border-red-500': errors.rodeo_id }"
-                                placeholder="Ingrese el ID del rodeo"
-                            />
-                            <p v-if="errors.rodeo_id" class="mt-2 text-sm text-red-600">
-                                <i class="fas fa-exclamation-circle mr-1"></i>
-                                {{ errors.rodeo_id }}
-                            </p>
-                        </div>
-
-                        <!-- Client ID Field -->
-                        <div>
-                            <label for="client_id" class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-user text-gray-400 mr-1"></i>
-                                Cliente ID *
-                            </label>
-                            <input
-                                id="client_id"
-                                v-model="form.client_id"
-                                type="number"
-                                required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
-                                :class="{ 'border-red-500 focus:ring-red-500 focus:border-red-500': errors.client_id }"
-                                placeholder="Ingrese el ID del cliente"
-                            />
-                            <p v-if="errors.client_id" class="mt-2 text-sm text-red-600">
-                                <i class="fas fa-exclamation-circle mr-1"></i>
-                                {{ errors.client_id }}
-                            </p>
-                        </div>
+                       
 
                         <!-- Recording Date Field -->
                         <div>
@@ -397,14 +336,35 @@ const props = defineProps({
     errors: {
         type: Object,
         default: () => ({})
-    }
+    },
+
 })
+
+console.log(props.recording.animal_id);
 
 // Reactive data
 const processing = ref(false)
 
 // Computed properties
-const isEditing = computed(() => props.recording !== null)
+const isEditing = computed(() => {
+    if (!props.recording) return false
+    
+    const fieldsToCheck = [
+        props.recording.animal_id,
+        props.recording.client_id,
+        props.recording.rodeo_id,
+        props.recording.recording_date,
+        props.recording.recording_type,
+        props.recording.veterinarian_id,
+        props.recording.status,
+        props.recording.recording_time,
+        props.recording.notes
+    ]
+    
+    const nonNullFields = fieldsToCheck.filter(field => field !== null && field !== undefined && field !== '')
+    
+    return nonNullFields.length > 3
+})
 
 // Form data using Inertia's useForm
 const form = useForm({
@@ -474,7 +434,7 @@ const submitForm = () => {
 // Lifecycle
 onMounted(() => {
     // Focus on first input when component mounts
-    document.getElementById('animal_id')?.focus()
+    document.getElementById('recording_type')?.focus()
 })
 </script>
 

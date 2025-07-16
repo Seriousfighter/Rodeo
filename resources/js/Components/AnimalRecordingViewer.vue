@@ -21,7 +21,7 @@
                         Actualizar
                     </button>
                     <Link 
-                        :href="route('recordings.create')"
+                         :href="route('recordings.create', { animalId: props.animalId })"
                         class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm"
                     >
                         <i class="fas fa-plus mr-2"></i>
@@ -133,7 +133,7 @@
                 {{ searchTerm || hasActiveFilters ? 'No se encontraron registros que coincidan con los filtros' : 'Este animal aún no tiene registros veterinarios' }}
             </p>
             <Link 
-                :href="route('recordings.create')"
+                :href="route('recordings.create', { animalId: props.animalId })"
                 class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
             >
                 <i class="fas fa-plus mr-2"></i>
@@ -221,21 +221,21 @@
                                     @click="viewRecording(recording)"
                                     class="text-blue-600 hover:text-blue-900 transition-colors duration-200"
                                     title="Ver detalles"
-                                >
+                                >View
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 <button
                                     @click="editRecording(recording)"
                                     class="text-green-600 hover:text-green-900 transition-colors duration-200"
                                     title="Editar"
-                                >
+                                >Edit
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button
                                     @click="confirmDelete(recording)"
                                     class="text-red-600 hover:text-red-900 transition-colors duration-200"
                                     title="Eliminar"
-                                >
+                                >Delete
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -333,6 +333,8 @@ const props = defineProps({
         required: true
     }
 })
+
+console.log(props.animalId);
 
 // Reactive data
 const searchTerm = ref('')

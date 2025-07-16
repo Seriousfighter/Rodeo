@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Services\RecordingApiService;
+use App\Services\Interfaces\AnimalInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class RecordingController extends Controller
 {
     private $recordingApi;
+    protected AnimalInterface $animalService;
 
-    public function __construct(RecordingApiService $recordingApi)
+    public function __construct(RecordingApiService $recordingApi, AnimalInterface $animalService,)
     {
         $this->recordingApi = $recordingApi;
+         $this->animalService = $animalService;
     }
 
     public function index(Request $request)
@@ -48,9 +51,30 @@ class RecordingController extends Controller
         }
     }
 
-    public function create()
+    public function create($animalId)
     {
-        return Inertia::render('Recordings/save');
+        try {
+            $animal = $this->animalService->findById($animalId);
+
+            $animal_id = $animal->id;
+            $client_id = $animal->rodeo->client_id;
+            $rodeo_id = $animal->rodeo_id;
+            
+            $ids = [
+                'animal_id' => $animal_id,
+                'client_id' => $client_id,
+                'rodeo_id' => $rodeo_id
+            ];
+            $recording = [
+                'animal_id' => $animal_id,
+                'rodeo_id' => $rodeo_id,
+                'client_id' => $client_id,
+                
+            ];
+            return Inertia::render('Recordings/save', ['ids' => $ids, 'recording' => $recording]);
+        } catch (\Exception $e) {
+            return redirect()->route('recordings.index')->with('error', $e->getMessage());
+        }
     }
 
     public function store(Request $request)
@@ -58,7 +82,7 @@ class RecordingController extends Controller
         //dd($request->all());
         try {
             $data = $request->validate([
-                'animal_id' => 'required|integer',
+                'animal_id' => 'required|integer',  
                 'rodeo_id' => 'required|integer',
                 'client_id' => 'required|integer',
                 'recording_type' => 'required|string',
@@ -72,7 +96,7 @@ class RecordingController extends Controller
             $result = $this->recordingApi->store($data);
             
             if ($result['success']) {
-                return redirect()->route('recordings.index')->with('success', 'Registro creado exitosamente');
+                return redirect()->route('animals.show', $data['animal_id'])->with('success', 'Registro creado exitosamente');
             } else {
                 return back()->withErrors(['error' => $result['error'] ?? 'Error al crear el registro']);
             }
@@ -84,12 +108,12 @@ class RecordingController extends Controller
 
     public function edit($id)
     {
+        //dd('here');
         try {
             $recording = $this->recordingApi->show($id);
-            
-            return Inertia::render('Recordings/Edit', [
-                'recording' => $recording
-            ]);
+//            dd($recording['data']['animal_id']);
+            $recording = $recording['data'];
+         return Inertia::render('Recordings/save', ['recording' => $recording]);
         } catch (\Exception $e) {
             return redirect()->route('recordings.index')->with('error', $e->getMessage());
         }
@@ -112,7 +136,7 @@ class RecordingController extends Controller
             $result = $this->recordingApi->update($id, $data);
             
             if ($result['success']) {
-                return redirect()->route('recordings.index')->with('success', 'Registro actualizado exitosamente');
+                return redirect()->route('animals.show', $data['animal_id'])->with('success', 'Registro modificado exitosamente');
             } else {
                 return back()->withErrors(['error' => $result['error'] ?? 'Error al actualizar el registro']);
             }
@@ -124,14 +148,16 @@ class RecordingController extends Controller
     public function destroy($id)
     {
         try {
+            
             $result = $this->recordingApi->delete($id);
             
             if ($result['success']) {
-                return redirect()->route('recordings.index')->with('success', 'Registro eliminado exitosamente');
+                return back()->with('success', 'Registro eliminado exitosamente');
             } else {
                 return back()->withErrors(['error' => $result['error'] ?? 'Error al eliminar el registro']);
             }
         } catch (\Exception $e) {
+            
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
