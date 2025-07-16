@@ -1,0 +1,253 @@
+<template>
+    <div class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">
+                            <i class="fas fa-cow text-green-600 mr-3"></i>
+                            Detalles del Animal
+                        </h1>
+                        <p class="mt-2 text-sm text-gray-600">
+                            Información completa y registros del animal
+                        </p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <Link 
+                            :href="route('animals.edit', animal.id)"
+                            class="inline-flex items-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm"
+                        >
+                            <i class="fas fa-edit mr-2"></i>
+                            Editar
+                        </Link>
+                        <Link 
+                            :href="route('animals.index')"
+                            class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm"
+                        >
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Volver
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Animal Information Card -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <!-- Card Header -->
+                        <div class="px-6 py-4 border-b border-gray-200 bg-green-50">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-cow text-green-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-semibold text-gray-900">
+                                        Caravana: {{ animal.caravana }}
+                                    </h2>
+                                    <p class="text-sm text-gray-600">Animal de {{ animal.rodeo?.client?.name }} {{ animal.rodeo?.client?.last_name }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Animal Details -->
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 gap-6">
+                                <!-- Basic Information -->
+                                <div class="space-y-4">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">
+                                        <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+                                        Información del Animal
+                                    </h3>
+                                    
+                                    <div class="space-y-3">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-tag text-gray-400 w-5"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-700">Caravana</p>
+                                                <p class="text-sm text-gray-600">{{ animal.caravana }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-certificate text-gray-400 w-5"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-700">Caravana Oficial</p>
+                                                <p class="text-sm text-gray-600">{{ animal.caravana_oficial || 'No especificada' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Rodeo Information -->
+                                <div class="space-y-4">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">
+                                        <i class="fas fa-clipboard-list text-blue-600 mr-2"></i>
+                                        Información del Rodeo
+                                    </h3>
+                                    
+                                    <div class="space-y-3">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-clipboard-list text-gray-400 w-5"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-700">Rodeo</p>
+                                                <p class="text-sm text-gray-600">{{ animal.rodeo?.name || 'Sin asignar' }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-user text-gray-400 w-5"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-700">Cliente</p>
+                                                <p class="text-sm text-gray-600">{{ animal.rodeo?.client?.name }} {{ animal.rodeo?.client?.last_name }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-map-marker-alt text-gray-400 w-5"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-700">Ubicación del Rodeo</p>
+                                                <p class="text-sm text-gray-600">{{ animal.rodeo?.location || 'No especificada' }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Registration Information -->
+                                <div class="space-y-4">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">
+                                        <i class="fas fa-calendar-alt text-blue-600 mr-2"></i>
+                                        Información de Registro
+                                    </h3>
+                                    
+                                    <div class="space-y-3">
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-calendar-plus text-gray-400 w-5"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-700">Fecha de Registro</p>
+                                                <p class="text-sm text-gray-600">{{ formatDate(animal.created_at) }}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center space-x-3">
+                                            <i class="fas fa-calendar-check text-gray-400 w-5"></i>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-700">Última Actualización</p>
+                                                <p class="text-sm text-gray-600">{{ formatDate(animal.updated_at) }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Card -->
+                    <div class="mt-6 bg-white rounded-lg shadow-sm border border-gray-200">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-medium text-gray-900">
+                                <i class="fas fa-chart-bar text-blue-600 mr-2"></i>
+                                Estadísticas
+                            </h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 gap-4">
+                                <div class="bg-green-50 rounded-lg p-4">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-cow text-green-600"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-green-900">Estado</p>
+                                            <p class="text-lg font-bold text-green-600">Activo</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-file-medical text-blue-600"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-blue-900">Registros</p>
+                                            <p class="text-lg font-bold text-blue-600">{{ recordings.length }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-yellow-50 rounded-lg p-4">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-calendar text-yellow-600"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-yellow-900">Días Registrado</p>
+                                            <p class="text-lg font-bold text-yellow-600">{{ getDaysRegistered() }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recordings Section -->
+                <div class="lg:col-span-2">
+                    <AnimalRecordingViewer 
+                        :recordings="recordings"
+                        :animal-id="animal.id"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import { Link, router } from '@inertiajs/vue3'
+import AnimalRecordingViewer from '@/Components/AnimalRecordingViewer.vue'
+
+// Props
+const props = defineProps({
+    animal: {
+        type: Object,
+        required: true
+    },
+    recordings: {
+        type: Array,
+        default: () => []
+    }
+})
+
+// Methods
+const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    })
+}
+
+const getDaysRegistered = () => {
+    const createdDate = new Date(props.animal.created_at)
+    const today = new Date()
+    const diffTime = Math.abs(today - createdDate)
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+}
+</script>
+
+<style scoped>
+.transition-colors {
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+</style>
