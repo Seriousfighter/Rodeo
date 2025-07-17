@@ -161,4 +161,43 @@ class RecordingController extends Controller
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
+
+    public function bulkStore(Request $request)
+    {
+       // dd($request->all());
+        try {
+            $data = $request->validate([
+                'recordings' => 'required|array',
+                'recordings.*.animal_id' => 'required|integer',
+                'recordings.*.rodeo_id' => 'required|integer',
+                'recordings.*.client_id' => 'required|integer',
+                'recordings.*.recording_type' => 'required|string',
+                'recordings.*.recording_data' => 'array',
+                'recordings.*.veterinarian_id' => 'required|integer',
+                'recordings.*.notes' => 'nullable|string',
+                'recordings.*.status' => 'nullable|string',
+                'recordings.*.recording_date' => 'required|date'
+            ]);
+
+            $results = [];
+            foreach ($data['recordings'] as $recordingData) {
+                $result = $this->recordingApi->store($recordingData);
+                $results[] = $result;
+            }
+
+            $successCount = count(array_filter($results, fn($r) => $r['success']));
+            
+            return response()->json([
+                'success' => true,
+                'message' => "Se crearon {$successCount} registros exitosamente",
+                'results' => $results
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+}
 }

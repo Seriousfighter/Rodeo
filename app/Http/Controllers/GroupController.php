@@ -7,7 +7,7 @@ use App\Http\Requests\StoreGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
 use App\Services\Interfaces\GroupInterface;
 use App\Services\Interfaces\RodeoInterface;
-
+use Inertia\Inertia;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -71,9 +71,15 @@ class GroupController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id)
+    public function show($id )
     {
         
+        $group = $this->groupService->show($id);
+        
+        
+        return inertia::render('Groups/Show', [
+            'group' => $group
+    ]);
     }
 
     /**
