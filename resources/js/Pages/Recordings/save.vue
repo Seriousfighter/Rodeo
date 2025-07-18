@@ -249,7 +249,7 @@
                     <!-- Form Actions -->
                     <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 mt-8 pt-6 border-t border-gray-200">
                         <Link 
-                            :href="route('recordings.index')"
+                            :href="route('animals.show', props.recording.animal_id)"
                             class="inline-flex justify-center items-center px-6 py-3 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium rounded-lg transition-colors duration-200"
                         >
                             <i class="fas fa-times mr-2"></i>

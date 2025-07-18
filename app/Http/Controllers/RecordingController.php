@@ -186,18 +186,13 @@ class RecordingController extends Controller
             }
 
             $successCount = count(array_filter($results, fn($r) => $r['success']));
-            
-            return response()->json([
-                'success' => true,
-                'message' => "Se crearon {$successCount} registros exitosamente",
-                'results' => $results
+
+            return redirect()->back()->with('success', $successCount .' registros creados exitosamente');
+
+        }catch (\Exception $e) {
+            return redirect()->back()->withErrors([
+                'error' => 'Error al cargar los datos: ' . $e->getMessage()
             ]);
-            
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => $e->getMessage()
-            ], 500);
         }
 }
 }
