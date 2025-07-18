@@ -141,7 +141,8 @@ it must have a button to save the changes made to the group, like adding or remo
                             <select
                                 v-model="masterVeterinarian"
                                 @change="applyMasterVeterinarian"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                disabled
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                             >
                                 <option value="1">Dr. García</option>
                                 <option value="2">Dr. Martínez</option>
@@ -192,16 +193,7 @@ it must have a button to save the changes made to the group, like adding or remo
                             <i class="fas fa-cow text-green-600 mr-2"></i>
                             Animales y Tratamientos
                         </h2>
-                        <div class="flex space-x-2">
-                            <button
-                                @click="saveGroupChanges"
-                                :disabled="!hasChanges"
-                                class="inline-flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white text-sm font-medium rounded-lg transition-colors duration-200"
-                            >
-                                <i class="fas fa-save mr-2"></i>
-                                Guardar Cambios
-                            </button>
-                        </div>
+                        
                     </div>
                 </div>
 
@@ -279,7 +271,8 @@ it must have a button to save the changes made to the group, like adding or remo
                                     <select
                                         v-model="getAnimalTreatment(animal.id).veterinarian_id"
                                         @change="updateAnimalTreatment(animal.id, 'veterinarian_id', $event.target.value)"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                                        :disabled="!getAnimalTreatment(animal.id).recording_type"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                                     >
                                         <option value="1">Dr. García</option>
                                         <option value="2">Dr. Martínez</option>
@@ -322,28 +315,55 @@ it must have a button to save the changes made to the group, like adding or remo
 
                                 <!-- Actions -->
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex space-x-2">
-                                        <Link
-                                            :href="route('animals.show', animal.id)"
-                                            class="text-blue-600 hover:text-blue-900 transition-colors duration-200"
-                                            title="Ver animal"
-                                        >
-                                            <i class="fas fa-eye"></i>
-                                        </Link>
-                                        <Link
-                                            :href="route('animals.edit', animal.id)"
-                                            class="text-green-600 hover:text-green-900 transition-colors duration-200"
-                                            title="Editar animal"
-                                        >
-                                            <i class="fas fa-edit"></i>
-                                        </Link>
+                                    <div class="relative inline-block text-left">
                                         <button
-                                            @click="confirmRemoveAnimal(animal)"
-                                            class="text-red-600 hover:text-red-900 transition-colors duration-200"
-                                            title="Remover del grupo"
+                                            @click="toggleActionsMenu(animal.id)"
+                                            class="inline-flex items-center p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                                            :id="`menu-button-${animal.id}`"
+                                            aria-expanded="false"
+                                            aria-haspopup="true"
                                         >
-                                            <i class="fas fa-times"></i>
+                                            
+                                            <i class="fas fa-bars"></i>
                                         </button>
+
+                                        <!-- Dropdown Menu -->
+                                        <div
+                                            v-show="openMenuId === animal.id"
+                                            class="absolute right-0 z-50 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                            role="menu"
+                                            :aria-labelledby="`menu-button-${animal.id}`"
+                                            style="z-index: 1000;"
+                                        > 
+                                            <div class="py-1" role="none">
+                                                <Link
+                                                    :href="route('animals.show', animal.id)"
+                                                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-200"
+                                                    role="menuitem"
+                                                    @click="closeActionsMenu"
+                                                >
+                                                    <i class="fas fa-eye mr-3 text-blue-600"></i>
+                                                    Ver Animal
+                                                </Link>
+                                                <Link
+                                                    :href="route('animals.edit', animal.id)"
+                                                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-200"
+                                                    role="menuitem"
+                                                    @click="closeActionsMenu"
+                                                >
+                                                    <i class="fas fa-edit mr-3 text-green-600"></i>
+                                                    Editar Animal
+                                                </Link>
+                                                <button
+                                                    @click="confirmRemoveAnimal(animal); closeActionsMenu()"
+                                                    class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-200"
+                                                    role="menuitem"
+                                                >
+                                                    <i class="fas fa-times mr-3 text-red-600"></i>
+                                                    Remover del Grupo
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -406,13 +426,26 @@ it must have a button to save the changes made to the group, like adding or remo
                 </div>
             </div>
         </div>
+
+        <!-- Add the Confirmation Modal at the bottom of the template -->
+        <ConfirmationModal
+            :show="showRemoveAnimalModal"
+            title="Remover Animal del Grupo"
+            :message="`¿Está seguro de que desea remover a <strong>${animalToRemove?.caravana}</strong> del grupo?`"
+            confirm-text="Remover"
+            cancel-text="Cancelar"
+            type="warning"
+            @confirm="removeAnimalFromGroup"
+            @cancel="cancelRemoveAnimal"
+        />
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, reactive } from 'vue'
+import { ref, computed, onMounted, reactive, onUnmounted } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import TreatmentDetailsForm from '@/Components/TreatmentDetailsForm.vue'
+import ConfirmationModal from '@/Components/ConfirmationModal.vue'
 
 // Props
 const props = defineProps({
@@ -431,6 +464,11 @@ const currentAnimalId = ref(null)
 const processing = ref(false)
 const hasChanges = ref(false)
 const showAddAnimalModal = ref(false)
+const openMenuId = ref(null)
+
+// Add new reactive data for remove animal modal
+const showRemoveAnimalModal = ref(false)
+const animalToRemove = ref(null)
 
 // Animal treatments - each animal has its own treatment configuration
 const animalTreatments = reactive({})
@@ -633,39 +671,91 @@ const saveGroupChanges = () => {
     alert('Cambios guardados exitosamente')
 }
 
+// Update the confirmRemoveAnimal method
 const confirmRemoveAnimal = (animal) => {
-    if (confirm(`¿Está seguro de que desea remover a ${animal.caravana} del grupo?`)) {
-        removeAnimalFromGroup(animal)
-    }
+    animalToRemove.value = animal
+    showRemoveAnimalModal.value = true
 }
 
-const removeAnimalFromGroup = async (animal) => {
+// Update the removeAnimalFromGroup method
+const removeAnimalFromGroup = async () => {
+    if (!animalToRemove.value) return
+    
     try {
-        // Remove from group animals
-        const groupIndex = props.group.animals.findIndex(groupAnimal => groupAnimal.id === animal.id)
-        if (groupIndex > -1) {
-            props.group.animals.splice(groupIndex, 1)
-        }
+        const animal = animalToRemove.value
         
-        // Remove from animal treatments
-        delete animalTreatments[animal.id]
-        
-        hasChanges.value = true
-        
-        console.log('Animal removed from group:', {
-            group_id: props.group.id,
-            animal_id: animal.id
+        // Make API call to remove animal from group
+        router.delete(route('groups.removeAnimals', props.group.id), {
+            data: {
+                animal_ids: [animal.id]  // Send as array to match backend validation
+            },
+            onSuccess: (page) => {
+                // Remove from group animals array
+                const groupIndex = props.group.animals.findIndex(groupAnimal => groupAnimal.id === animal.id)
+                if (groupIndex > -1) {
+                    props.group.animals.splice(groupIndex, 1)
+                }
+                
+                // Remove from animal treatments
+                delete animalTreatments[animal.id]
+                
+                hasChanges.value = true
+                
+                // Show success message from backend
+                if (page.props.flash?.success) {
+                    alert(page.props.flash.message || 'Animal removido del grupo exitosamente')
+                }
+                
+                // Close modal and reset
+                showRemoveAnimalModal.value = false
+                animalToRemove.value = null
+            },
+            onError: (errors) => {
+                console.error('Error removing animal from group:', errors)
+                const errorMessage = errors.error || 'Error al remover el animal del grupo'
+                alert(errorMessage)
+                showRemoveAnimalModal.value = false
+                animalToRemove.value = null
+            }
         })
         
     } catch (error) {
         console.error('Error removing animal from group:', error)
         alert('Error al remover el animal del grupo')
+        showRemoveAnimalModal.value = false
+        animalToRemove.value = null
+    }
+}
+
+// Add cancel method
+const cancelRemoveAnimal = () => {
+    showRemoveAnimalModal.value = false
+    animalToRemove.value = null
+}
+
+const toggleActionsMenu = (animalId) => {
+    openMenuId.value = openMenuId.value === animalId ? null : animalId
+}
+
+const closeActionsMenu = () => {
+    openMenuId.value = null
+}
+
+// Close menu when clicking outside
+const handleClickOutside = (event) => {
+    if (!event.target.closest('.relative.inline-block.text-left')) {
+        closeActionsMenu()
     }
 }
 
 // Initialize component
 onMounted(() => {
     initializeAnimalTreatments()
+    document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside)
 })
 </script>
 

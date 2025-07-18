@@ -250,32 +250,16 @@
         </div>
 
         <!-- Delete Confirmation Modal -->
-        <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                <div class="flex items-center space-x-3 mb-4">
-                    <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
-                    <h3 class="text-lg font-semibold text-gray-900">Confirmar Eliminación</h3>
-                </div>
-                <p class="text-gray-600 mb-6">
-                    ¿Estás seguro de que deseas eliminar el rodeo <strong>{{ rodeo.name }}</strong>? 
-                    Esta acción eliminará también todos los animales asociados y no se puede deshacer.
-                </p>
-                <div class="flex space-x-3">
-                    <button
-                        @click="cancelDelete"
-                        class="flex-1 px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium rounded-lg transition-colors duration-200"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        @click="deleteRodeo"
-                        class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200"
-                    >
-                        Eliminar
-                    </button>
-                </div>
-            </div>
-        </div>
+        <ConfirmationModal
+            :show="showDeleteModal"
+            title="Confirmar Eliminación"
+            :message="`¿Estás seguro de que deseas eliminar el rodeo <strong>${rodeo.name}</strong>? Esta acción eliminará también todos los animales asociados y no se puede deshacer.`"
+            confirm-text="Eliminar"
+            cancel-text="Cancelar"
+            type="danger"
+            @confirm="deleteRodeo"
+            @cancel="cancelDelete"
+        />
     </div>
 </template>
 
@@ -283,7 +267,7 @@
 import { ref, computed } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import AnimalTableEditor from '@/Components/AnimalTableEditor.vue'
-
+import ConfirmationModal from '@/Components/ConfirmationModal.vue'
 // Props
 const props = defineProps({
     rodeo: {
