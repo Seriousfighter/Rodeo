@@ -21,6 +21,6 @@ class Group extends Model
         return $this->belongsToMany(Animal::class);
     }
     public function rodeo(){
-        return $this->belongsToMany(Rodeo::class);
+        return $this->belongsTo(Rodeo::class);
     }
 }

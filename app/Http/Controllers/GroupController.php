@@ -7,7 +7,7 @@ use App\Http\Requests\StoreGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
 use App\Services\Interfaces\GroupInterface;
 use App\Services\Interfaces\RodeoInterface;
-
+use Inertia\Inertia;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -71,9 +71,15 @@ class GroupController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id)
+    public function show($id )
     {
         
+        $group = $this->groupService->show($id);
+        
+        
+        return inertia::render('Groups/Show', [
+            'group' => $group
+    ]);
     }
 
     /**
@@ -166,7 +172,7 @@ class GroupController extends Controller
     /**
      * Remove animals from a group
      */
-    public function removeAnimals(Request $request, int $id): JsonResponse
+    public function removeAnimals(Request $request, int $id)
     {
         $request->validate([
             'animal_ids' => 'required|array',
@@ -177,21 +183,19 @@ class GroupController extends Controller
             $success = $this->groupService->removeAnimals($id, $request->animal_ids);
             
             if (!$success) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Grupo no encontrado'
-                ], 404);
+                return back()->withErrors([
+                    'error' => 'Grupo no encontrado o error al remover animales'
+                ]);
             }
-            
-            return response()->json([
+
+            return back()->with([
                 'success' => true,
                 'message' => 'Animales removidos del grupo exitosamente'
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al remover animales: ' . $e->getMessage()
-            ], 500);
+            return back()->withErrors([
+                'error' => 'Error al remover animales: ' . $e->getMessage()
+            ]);
         }
     }
 }
