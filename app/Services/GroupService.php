@@ -94,7 +94,7 @@ class GroupService implements GroupInterface
      */
     public function show($id)
     {
-        return Group::with('Animals')->find($id);
+        return Group::with('Animals', 'Rodeo')->find($id);
     }
 
     /**

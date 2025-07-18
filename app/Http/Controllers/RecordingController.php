@@ -161,4 +161,38 @@ class RecordingController extends Controller
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
+
+    public function bulkStore(Request $request)
+    {
+       // dd($request->all());
+        try {
+            $data = $request->validate([
+                'recordings' => 'required|array',
+                'recordings.*.animal_id' => 'required|integer',
+                'recordings.*.rodeo_id' => 'required|integer',
+                'recordings.*.client_id' => 'required|integer',
+                'recordings.*.recording_type' => 'required|string',
+                'recordings.*.recording_data' => 'array',
+                'recordings.*.veterinarian_id' => 'required|integer',
+                'recordings.*.notes' => 'nullable|string',
+                'recordings.*.status' => 'nullable|string',
+                'recordings.*.recording_date' => 'required|date'
+            ]);
+
+            $results = [];
+            foreach ($data['recordings'] as $recordingData) {
+                $result = $this->recordingApi->store($recordingData);
+                $results[] = $result;
+            }
+
+            $successCount = count(array_filter($results, fn($r) => $r['success']));
+
+            return redirect()->back()->with('success', $successCount .' registros creados exitosamente');
+
+        }catch (\Exception $e) {
+            return redirect()->back()->withErrors([
+                'error' => 'Error al cargar los datos: ' . $e->getMessage()
+            ]);
+        }
+}
 }
