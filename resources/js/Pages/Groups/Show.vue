@@ -774,7 +774,6 @@ onUnmounted(() => {
 // Add export method
 const exportToCSV = async () => {
    
-    
     exportingCSV.value = true
     
     try {
@@ -785,11 +784,6 @@ const exportToCSV = async () => {
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
-        
-        // Show success message
-        setTimeout(() => {
-            alert('Exportación iniciada. El archivo se descargará automáticamente.')
-        }, 500)
         
     } catch (error) {
         console.error('Error exporting CSV:', error)
