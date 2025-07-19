@@ -42,7 +42,11 @@ Route::middleware([
      Route::resource('recordings', RecordingController::class)->except(['create']);
      Route::get('recordings/create/{animalId}', [RecordingController::class, 'create'])->name('recordings.create');
 
-     Route::get('groups/{group}', [GroupController::class, 'show'])->name('groups.show');
+    Route::get('groups/{group}', [GroupController::class, 'show'])->name('groups.show');
     Route::post('recordings/bulk', [RecordingController::class, 'bulkStore'])->name('recordings.bulk.store');
+
+    //csv export
+    Route::get('groups/{id}/export-csv', [GroupController::class, 'exportCSV'])->name('groups.exportCSV');
+
    
 });
