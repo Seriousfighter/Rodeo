@@ -51,15 +51,15 @@ class GroupController extends Controller
      */
     public function store(StoreGroupRequest $request)
     {
-        Log::info('Group store request data:', $request->validated());
         
-        //dd($request->validated());
         try {
             $group = $this->groupService->store($request->validated());
             
             return redirect()->back()->with([
                 'success' => true,
-                'message' => 'Grupo creado exitosamente'
+                'message' => 'Grupo creado exitosamente',
+                'group_id' => $group->id
+
             ]);
         } catch (\Exception $e) {
            return redirect()->back()->withErrors([
@@ -75,7 +75,6 @@ class GroupController extends Controller
     {
         
         $group = $this->groupService->show($id);
-        
         
         return inertia::render('Groups/Show', [
             'group' => $group

@@ -240,6 +240,7 @@
             <!-- Animals Management Section -->
             <div class="mt-8">
                 <AnimalTableEditor 
+                    :group_id="props.group_id"
                     :rodeo-id="rodeo.id" 
                     :animals="rodeo.animals || []"
                     @animal-added="handleAnimalAdded"
@@ -273,6 +274,10 @@ const props = defineProps({
     rodeo: {
         type: Object,
         required: true
+    },
+    group_id: {
+        type: Number,
+        default: null
     }
 })
 

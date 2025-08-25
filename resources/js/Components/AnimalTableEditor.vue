@@ -322,14 +322,7 @@
                         placeholder="Ingrese el nombre del grupo"
                     />
                 </div>
-                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                    <div class="flex items-center">
-                        <i class="fas fa-info-circle text-yellow-600 mr-2"></i>
-                        <p class="text-sm text-yellow-700">
-                            Esta funcionalidad estará disponible próximamente en el backend.
-                        </p>
-                    </div>
-                </div>
+                
                 <div class="flex space-x-3">
                     <button
                         @click="cancelCreateGroup"
@@ -375,6 +368,10 @@ const props = defineProps({
     animals: {
         type: Array,
         default: () => []
+    },
+    group_id: {
+        type: Number,
+        default: null
     }
 })
 
@@ -564,7 +561,8 @@ const executeCreateGroup = async () => {
         },
         onSuccess: (page) => {
             showNotification(`Grupo "${groupName.value}" creado exitosamente con ${selectedAnimals.value.length} animales`, 'success')
-            
+            console.log(props.group_id)
+            //router.visit(route('groups.show', props.group.id))
             // Clear selection and close modal
             selectedAnimals.value = []
             cancelCreateGroup()
@@ -579,7 +577,8 @@ const executeCreateGroup = async () => {
         },
         onFinish: () => {
             loading.value = false
-        }
+        },
+       
     })
 }
 
