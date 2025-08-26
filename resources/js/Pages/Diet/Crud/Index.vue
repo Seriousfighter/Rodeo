@@ -1,4 +1,5 @@
 <template>
+    <AppLayout title="Dietas">  
     <div class="min-h-screen bg-gray-50">
         <!-- Header -->
         <div class="bg-white shadow-sm border-b border-gray-200">
@@ -250,11 +251,13 @@
             </div>
         </div>
     </div>
+    </AppLayout>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
+import AppLayout from '@/Layouts/AppLayout.vue'
 
 // Props
 const props = defineProps({

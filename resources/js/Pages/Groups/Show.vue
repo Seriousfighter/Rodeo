@@ -16,6 +16,7 @@ it must have a button to save the changes made to the group, like adding or remo
 -->
 
 <template>
+    <AppLayout title="Group">
     <div class="min-h-screen bg-gray-50">
         <!-- Header -->
         <div class="bg-white shadow-sm border-b border-gray-200">
@@ -458,6 +459,7 @@ it must have a button to save the changes made to the group, like adding or remo
             @cancel="cancelRemoveAnimal"
         />
     </div>
+    </AppLayout>
 </template>
 
 <script setup>
@@ -465,6 +467,7 @@ import { ref, computed, onMounted, reactive, onUnmounted } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import TreatmentDetailsForm from '@/Components/TreatmentDetailsForm.vue'
 import ConfirmationModal from '@/Components/ConfirmationModal.vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
 
 // Props
 const props = defineProps({

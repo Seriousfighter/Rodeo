@@ -1,4 +1,5 @@
 <template>
+    <AppLayout title="Rodeos">
     <div class="min-h-screen bg-gray-50">
         <!-- Header -->
         <div class="bg-white shadow-sm border-b border-gray-200">
@@ -262,6 +263,7 @@
             @cancel="cancelDelete"
         />
     </div>
+    </AppLayout>
 </template>
 
 <script setup>
@@ -269,6 +271,7 @@ import { ref, computed } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import AnimalTableEditor from '@/Components/AnimalTableEditor.vue'
 import ConfirmationModal from '@/Components/ConfirmationModal.vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
 // Props
 const props = defineProps({
     rodeo: {
