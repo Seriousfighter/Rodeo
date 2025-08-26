@@ -9,6 +9,7 @@ use App\Http\Controllers\RodeoController;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\RecordingController;
+use App\Http\Controllers\DietController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -32,6 +33,11 @@ Route::middleware([
     Route::resource('rodeos', RodeoController::class);
     Route::resource('animals', AnimalController::class);
     Route::resource('groups', GroupController::class);
+
+     // Diet routes
+    Route::resource('diets', DietController::class);
+    Route::get('diets/type/{type}', [DietController::class, 'getByType'])->name('diets.byType');
+
     Route::post('groups/{id}/animals', [GroupController::class, 'addAnimals']);
     Route::delete('groups/{id}/animals', [GroupController::class, 'removeAnimals'])->name('groups.removeAnimals');
     Route::get('groups/{id}/index', [GroupController::class, 'rodeoGroups'])->name('rodeo.groups');
