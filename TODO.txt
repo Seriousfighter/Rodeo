@@ -1,0 +1,6 @@
+here is everything  i see to improve or fix: so if i ask copilot for whats is left to do, it must read this.
+
+-esto anda bien en docker//fix recording creations, it was working, now a dd("error") says: "error" // app/Http/Controllers/RecordingController.php:110
+
+-Add the funcion for add animals to a grup and  to move between groups
+-Al eliminar un aminla, se debe eliminar
