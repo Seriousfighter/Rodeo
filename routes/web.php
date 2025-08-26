@@ -9,6 +9,8 @@ use App\Http\Controllers\RodeoController;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\RecordingController;
+use App\Http\Controllers\DietController;
+use App\Http\Controllers\GroupDietController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -32,6 +34,20 @@ Route::middleware([
     Route::resource('rodeos', RodeoController::class);
     Route::resource('animals', AnimalController::class);
     Route::resource('groups', GroupController::class);
+
+     // Diet routes
+    Route::resource('diets', DietController::class);
+    Route::get('diets/type/{type}', [DietController::class, 'getByType'])->name('diets.byType');
+    // Group Diets Routes
+    Route::prefix('groups/{group}/diets')->name('groups.diets.')->group(function () {
+        Route::get('/', [GroupDietController::class, 'index'])->name('index');
+        Route::post('/assign', [GroupDietController::class, 'assignDiet'])->name('assign');
+        Route::put('/{diet}', [GroupDietController::class, 'updateDiet'])->name('update');
+        Route::delete('/{diet}', [GroupDietController::class, 'removeDiet'])->name('remove');
+        Route::post('/{diet}/activate', [GroupDietController::class, 'setActiveDiet'])->name('activate');
+    });
+
+
     Route::post('groups/{id}/animals', [GroupController::class, 'addAnimals']);
     Route::delete('groups/{id}/animals', [GroupController::class, 'removeAnimals'])->name('groups.removeAnimals');
     Route::get('groups/{id}/index', [GroupController::class, 'rodeoGroups'])->name('rodeo.groups');

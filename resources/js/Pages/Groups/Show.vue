@@ -49,6 +49,13 @@ it must have a button to save the changes made to the group, like adding or remo
                             <i :class="exportingCSV ? 'fas fa-spinner fa-spin' : 'fas fa-download'" class="mr-2"></i>
                             {{ exportingCSV ? 'Exportando...' : 'Exportar CSV' }}
                         </button>
+                        <Link 
+                            :href="route('groups.diets.index', props.group.id)"
+                            class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm"
+                        >
+                            <i class="fas fa-utensils mr-2"></i>
+                            Gestionar Dietas
+                        </Link>
                         
                         <button
                             @click="showAddAnimalModal = true"
