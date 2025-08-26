@@ -69,17 +69,51 @@ services:
     image: mongodb/mongodb-community-server:latest
     container_name: rodeo-mongodb
     restart: unless-stopped
-    expose:
-      - "27017"
+    #expose:
+    #  - "27017" cambiarlo en produccion eliminar ports y dejar expose
+    ports:
+      - "27017:27017"
     networks:
       - app-network
     volumes:
       - mongodb_data:/data/db
+
+   # Diet API Express
+  diet-api:
+    build: ./DietApi
+    container_name: diet-api
+    restart: unless-stopped
+    expose:
+      - "3001"
+    networks:
+      - app-network
+    depends_on:
+      - mongodb2
+    environment:
+      - PORT=3001
+      - MONGODB_URI=mongodb://mongodb2:27017/diet
+      - ALLOWED_ORIGINS=http://rodeo-app:9000
+      - API_SECRET=tu_clave_secreta_aqui
+
+  # MOngoDB service for diet API
+  mongodb2:
+    image: mongodb/mongodb-community-server:latest
+    container_name: rodeo-mongodb2
+    restart: unless-stopped
+    #expose:
+    #  - "27017" cambiarlo en produccion
+    ports:
+      - "27018:27017"
+    networks:
+      - app-network
+    volumes:
+      - diet_data:/data/db
 
 networks:
   app-network:
     driver: bridge
 
 volumes:
+  diet_data:
   mongodb_data:
   mysql_data:
