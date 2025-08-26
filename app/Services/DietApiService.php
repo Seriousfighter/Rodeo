@@ -109,7 +109,6 @@ class DietApiService
 
     public function assignDietToGroup($data)
     {
-        //dd($data);
         return $this->makeRequest('POST', '/group-diets', $data);
     }
 

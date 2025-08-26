@@ -305,12 +305,12 @@ router.delete('/:groupId/diets/:dietId', async (req, res) => {
         }
 
         // Don't allow deletion if it's the only diet
-        if (groupDiet.diets.length === 1) {
+        /*if (groupDiet.diets.length === 1) {
             return res.status(400).json({
                 success: false,
                 error: 'Cannot delete the only diet in group'
             });
-        }
+        }*/
 
         // If deleting active diet, set another as active
         if (groupDiet.active_diet_id && groupDiet.active_diet_id.toString() === dietId) {

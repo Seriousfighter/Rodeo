@@ -173,7 +173,7 @@ class GroupDietController extends Controller
             $result = $this->dietApi->removeGroupDiet($groupId, $dietId);
 
             if ($result['success']) {
-                return response()->json([
+                return redirect()->back()->with([
                     'success' => true,
                     'message' => 'Dieta removida del grupo exitosamente'
                 ]);
@@ -201,11 +201,11 @@ class GroupDietController extends Controller
             $result = $this->dietApi->setActiveGroupDiet($groupId, $dietId);
 
             if ($result['success']) {
-                return response()->json([
+                return redirect()->back()->with([
                     'success' => true,
                     'message' => 'Dieta activa cambiada exitosamente',
                     'data' => $result['data']
-                ]);
+                ]);     
             } else {
                 return response()->json([
                     'success' => false,
