@@ -1,0 +1,25 @@
+{
+  "name": "recordingapi",
+  "version": "1.0.0",
+  "description": "this is an api rest for mongoDB, it manage the recording of animals, it conects to laravel app rodeo.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch app.js",
+    "start": "node app.js" 
+  },
+  "keywords": [],
+  "author": "Schneider Alan",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "mongoose": "^7.5.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+  
+}
