@@ -95,6 +95,43 @@ class DietApiService
         return $this->makeRequest('DELETE', "/diets/{$dietId}/components/{$componentId}");
     }
 
+    // Group Diet Methods
+    public function getAllGroupDiets($filters = [])
+    {
+        $query = http_build_query(array_filter($filters));
+        return $this->makeRequest('GET', '/group-diets' . ($query ? '?' . $query : ''));
+    }
+
+    public function getGroupDietByGroupId($groupId)
+    {
+        return $this->makeRequest('GET', "/group-diets/group/{$groupId}");
+    }
+
+    public function assignDietToGroup($data)
+    {
+        //dd($data);
+        return $this->makeRequest('POST', '/group-diets', $data);
+    }
+
+    public function updateGroupDiet($groupId, $dietId, $data)
+    {
+        return $this->makeRequest('PUT', "/group-diets/{$groupId}/diets/{$dietId}", $data);
+    }
+
+    public function removeGroupDiet($groupId, $dietId)
+    {
+        return $this->makeRequest('DELETE', "/group-diets/{$groupId}/diets/{$dietId}");
+    }
+
+    public function setActiveGroupDiet($groupId, $dietId)
+    {
+        return $this->makeRequest('POST', "/group-diets/{$groupId}/activate/{$dietId}");
+    }
+
+    public function getActiveGroupDiet($groupId)
+    {
+        return $this->makeRequest('GET', "/group-diets/{$groupId}/active");
+    }
     public function healthCheck()
     {
         return $this->makeRequest('GET', '/health');

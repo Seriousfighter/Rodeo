@@ -71,7 +71,7 @@ mongoose.connect(MONGODB_URI, {
 // Import routes
 const dietRoutes = require('./routes/diets');
 const ingredientRoutes = require('./routes/ingredients');
-const groupDietRoutes = require('./routes/groupDiets');
+const groupDietRoutes = require('./routes/groupDiet'); // ✅ Verificar esta línea
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -128,10 +128,10 @@ app.get('/', (req, res) => {
     });
 });
 
-// Use routes
+// Use routes ANTES del middleware de API key
 app.use('/diets', dietRoutes);
 app.use('/ingredients', ingredientRoutes);
-app.use('/group-diets', groupDietRoutes);
+app.use('/group-diets', groupDietRoutes); // ✅ Verificar esta línea
 
 // Health check endpoint
 app.get('/health', (req, res) => {
