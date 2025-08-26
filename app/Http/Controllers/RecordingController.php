@@ -6,7 +6,13 @@ use App\Services\RecordingApiService;
 use App\Services\Interfaces\AnimalInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
+/**
+ * debo crear componente para vista que informe en caso de estar desconectada la api
+ * esto debe servir para que todo sea independiente y modular, asi poder ofrecer diversas opciones
+ * en este caso solo index al no poder conectarse, laza un dd("modulo desconectado"),
+ * se me ocurre que podria hacer un check health a la api o demas y utilizarlo para mostrar un mensaje mas amigable
+ *
+ */
 class RecordingController extends Controller
 {
     private $recordingApi;
