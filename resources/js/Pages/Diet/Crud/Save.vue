@@ -76,18 +76,28 @@
                                 </div>
                             </div>
 
-                            <!-- Total Weight -->
+                            <!-- Total Weight - Make it readonly and show calculated value -->
                             <div>
                                 <label for="total_weight" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Peso Total
+                                    Peso Total (Calculado Automáticamente)
                                 </label>
-                                <input
-                                    id="total_weight"
-                                    v-model="form.total_weight"
-                                    type="text"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                    placeholder="Ej: 26.9 kg"
-                                />
+                                <div class="relative">
+                                    <input
+                                        id="total_weight"
+                                        :value="calculatedTotalWeight"
+                                        type="text"
+                                        readonly
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed"
+                                        placeholder="Se calcula automáticamente"
+                                    />
+                                    <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                        <i class="fas fa-calculator text-gray-400"></i>
+                                    </div>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Se calcula sumando todos los componentes (kg y gr convertidos a kg)
+                                </p>
                                 <div v-if="errors.total_weight" class="mt-1 text-sm text-red-600">
                                     {{ errors.total_weight }}
                                 </div>
@@ -295,7 +305,7 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, watch } from 'vue'
 import { Link, useForm, router } from '@inertiajs/vue3'
 
 // Props
@@ -327,6 +337,50 @@ const form = useForm({
 // Reactive state
 const processing = ref(false)
 
+// Computed property for automatic weight calculation
+const calculatedTotalWeight = computed(() => {
+    let totalKg = 0
+    
+    form.components.forEach(component => {
+        const amount = parseFloat(component.amount) || 0
+        
+        if (amount > 0) {
+            switch (component.unit) {
+                case 'kg':
+                    totalKg += amount
+                    break
+                case 'gr':
+                    totalKg += amount / 1000 // Convert grams to kg
+                    break
+                case 'L':
+                    totalKg += amount // Assume 1L = 1kg for liquids
+                    break
+                case 'ml':
+                    totalKg += amount / 1000 // Convert ml to L, then assume 1L = 1kg
+                    break
+                case 'units':
+                    // For units, we could assume an average weight per unit
+                    // For now, we'll skip units in the calculation
+                    break
+                case 'other':
+                    // Skip 'other' units as we don't know the conversion
+                    break
+            }
+        }
+    })
+    
+    return totalKg > 0 ? `${totalKg.toFixed(2)} kg` : ''
+})
+
+// Watch for changes in components and auto-update total weight
+watch(
+    () => form.components.map(c => ({ amount: c.amount, unit: c.unit })),
+    () => {
+        form.total_weight = calculatedTotalWeight.value
+    },
+    { deep: true }
+)
+
 // Methods
 const addComponent = () => {
     form.components.push({
@@ -343,6 +397,8 @@ const removeComponent = (index) => {
     } else if (confirm('¿Estás seguro de eliminar el único componente? Una dieta debe tener al menos un componente.')) {
         form.components.splice(index, 1)
     }
+    // After removing, recalculate total weight
+    form.total_weight = calculatedTotalWeight.value
 }
 
 const submitForm = () => {
@@ -363,12 +419,8 @@ const submitForm = () => {
 
     processing.value = true
 
-    const submitData = {
-        ...form.data(),
-        components: form.components.filter(component => 
-            component.name.trim() && component.amount.trim()
-        )
-    }
+    // Ensure total weight is calculated before submitting
+    form.total_weight = calculatedTotalWeight.value
 
     if (isEditing.value) {
         // Update existing diet
@@ -398,9 +450,3 @@ if (!isEditing.value && form.components.length === 0) {
     addComponent()
 }
 </script>
-
-<style scoped>
-.transition-colors {
-    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-}
-</style>
