@@ -1,5 +1,7 @@
 <template>
+
     <AppLayout title="Gestión de Dietas del Grupo">
+
     <div class="min-h-screen bg-gray-50">
         <!-- Header -->
         <div class="bg-white shadow-sm border-b border-gray-200">
@@ -278,14 +280,18 @@
             </div>
         </div>
     </div>
+
     </AppLayout>
+
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
 import { Link } from '@inertiajs/vue3'
+
 import AppLayout from '@/Layouts/AppLayout.vue'
+
 
 const props = defineProps({
     group: Object,
