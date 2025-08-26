@@ -51,15 +51,15 @@ class GroupController extends Controller
      */
     public function store(StoreGroupRequest $request)
     {
-        Log::info('Group store request data:', $request->validated());
         
-        //dd($request->validated());
         try {
             $group = $this->groupService->store($request->validated());
             
             return redirect()->back()->with([
                 'success' => true,
-                'message' => 'Grupo creado exitosamente'
+                'message' => 'Grupo creado exitosamente',
+                'group_id' => $group->id
+
             ]);
         } catch (\Exception $e) {
            return redirect()->back()->withErrors([
@@ -75,7 +75,6 @@ class GroupController extends Controller
     {
         
         $group = $this->groupService->show($id);
-        
         
         return inertia::render('Groups/Show', [
             'group' => $group
@@ -198,4 +197,81 @@ class GroupController extends Controller
             ]);
         }
     }
+
+    public function exportCSV(int $id)
+{
+    try {
+        $group = $this->groupService->show($id);
+        
+        if (!$group) {
+            return redirect()->back()->withErrors([
+                'error' => 'Grupo no encontrado'
+            ]);
+        }
+
+        // Prepare CSV data
+        $csvData = [];
+        
+        // CSV Headers
+        $csvData[] = [
+            //'ID Animal',
+            'Caravana',
+            'Caravana Oficial',
+            'Detalle                ',
+            //'Raza',
+            //'Sexo',
+            //'Fecha Nacimiento',
+            //'Rodeo',
+            //'Cliente',
+            //'Fecha Creación'
+        ];
+        
+        // Add animal data
+        foreach ($group->animals as $animal) {
+            $csvData[] = [
+                //$animal->id,
+                $animal->caravana ?? 'N/A',
+                $animal->caravana_oficial ?? 'N/A',
+                '',
+                //$animal->raza ?? 'N/A',
+                //$animal->sexo ?? 'N/A',
+                //$animal->fecha_nacimiento ? date('d/m/Y', strtotime($animal->fecha_nacimiento)) : 'N/A',
+                //$group->rodeo->name ?? 'N/A',
+                //$group->rodeo->client ? $group->rodeo->client->name . ' ' . $group->rodeo->client->last_name : 'N/A',
+                //$animal->created_at ? date('d/m/Y H:i', strtotime($animal->created_at)) : 'N/A'
+            ];
+        }
+        
+        // Generate CSV content
+        $output = fopen('php://temp', 'w+');
+        
+        // Add BOM for UTF-8 support in Excel
+        fwrite($output, "\xEF\xBB\xBF");
+        
+        foreach ($csvData as $row) {
+            fputcsv($output, $row, ';'); // Using semicolon for better Excel compatibility
+        }
+        
+        rewind($output);
+        $csvContent = stream_get_contents($output);
+        fclose($output);
+        
+        // Generate filename
+        $filename = 'grupo_' . $group->name . '_animales_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = preg_replace('/[^a-zA-Z0-9_\-.]/', '_', $filename); // Clean filename
+        
+        // Return CSV download response
+        return response($csvContent)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
+            
+    } catch (\Exception $e) {
+        return redirect()->back()->withErrors([
+            'error' => 'Error al exportar CSV: ' . $e->getMessage()
+        ]);
+    }
+}
 }

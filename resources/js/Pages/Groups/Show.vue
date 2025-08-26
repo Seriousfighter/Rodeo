@@ -38,6 +38,25 @@ it must have a button to save the changes made to the group, like adding or remo
                             <i class="fas fa-arrow-left mr-2"></i>
                             Volver a Grupos
                         </Link>
+                        
+                        <!-- Export CSV Button -->
+                        <button
+                            @click="exportToCSV"
+                            :disabled="!group.animals?.length || exportingCSV"
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200"
+                            title="Exportar animales a CSV"
+                        >
+                            <i :class="exportingCSV ? 'fas fa-spinner fa-spin' : 'fas fa-download'" class="mr-2"></i>
+                            {{ exportingCSV ? 'Exportando...' : 'Exportar CSV' }}
+                        </button>
+                        <Link 
+                            :href="route('groups.diets.index', props.group.id)"
+                            class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm"
+                        >
+                            <i class="fas fa-utensils mr-2"></i>
+                            Gestionar Dietas
+                        </Link>
+                        
                         <button
                             @click="showAddAnimalModal = true"
                             class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
@@ -465,10 +484,11 @@ const processing = ref(false)
 const hasChanges = ref(false)
 const showAddAnimalModal = ref(false)
 const openMenuId = ref(null)
-
-// Add new reactive data for remove animal modal
 const showRemoveAnimalModal = ref(false)
 const animalToRemove = ref(null)
+
+// Add export state
+const exportingCSV = ref(false)
 
 // Animal treatments - each animal has its own treatment configuration
 const animalTreatments = reactive({})
@@ -757,6 +777,28 @@ onMounted(() => {
 onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside)
 })
+
+// Add export method
+const exportToCSV = async () => {
+   
+    exportingCSV.value = true
+    
+    try {
+        // Create a temporary link to trigger download
+        const link = document.createElement('a')
+        link.href = route('groups.exportCSV', props.group.id)
+        link.style.display = 'none'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        
+    } catch (error) {
+        console.error('Error exporting CSV:', error)
+        alert('Error al exportar el archivo CSV')
+    } finally {
+        exportingCSV.value = false
+    }
+}
 </script>
 
 <style scoped>
