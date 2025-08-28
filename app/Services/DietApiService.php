@@ -102,6 +102,12 @@ class DietApiService
         return $this->makeRequest('GET', '/group-diets' . ($query ? '?' . $query : ''));
     }
 
+    public function getRodeoDiets($rodeoId)
+    {
+        //dd($rodeoId);
+        return $this->makeRequest('GET', "/group-diets/rodeo/{$rodeoId}");
+    }
+
     public function getGroupDietByGroupId($groupId)
     {
         return $this->makeRequest('GET', "/group-diets/group/{$groupId}");
@@ -109,6 +115,10 @@ class DietApiService
 
     public function assignDietToGroup($data)
     {
+        // Asegurarse de que rodeo_id esté incluido
+        if (!isset($data['rodeo_id'])) {
+            throw new \Exception('rodeo_id is required');
+        }
         return $this->makeRequest('POST', '/group-diets', $data);
     }
 

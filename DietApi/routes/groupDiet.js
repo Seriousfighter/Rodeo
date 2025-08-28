@@ -4,11 +4,12 @@ const GroupDiet = require('../models/GroupDiet');
 const Diet = require('../models/Diet');
 const { validateObjectId } = require('../middleware/validation');
 
-// GET - All group diets
+// GET - All group diets with rodeo_id filter
 router.get('/', async (req, res) => {
     try {
         const {
             group_id,
+            rodeo_id,
             status,
             page = 1,
             limit = 50
@@ -16,6 +17,7 @@ router.get('/', async (req, res) => {
 
         const filter = {};
         if (group_id) filter.group_id = parseInt(group_id);
+        if (rodeo_id) filter.rodeo_id = parseInt(rodeo_id);
         if (status) filter.status = status;
 
         const pageNum = parseInt(page);
@@ -47,17 +49,18 @@ router.get('/', async (req, res) => {
         });
     }
 });
-
-// GET - Specific group diet by group_id
+// GET - Group diet by group_id
 router.get('/group/:groupId', async (req, res) => {
     try {
         const groupId = parseInt(req.params.groupId);
-        const groupDiet = await GroupDiet.findByGroupId(groupId);
+        
+        const groupDiet = await GroupDiet.findOne({ group_id: groupId });
         
         if (!groupDiet) {
             return res.status(404).json({
                 success: false,
-                error: 'Group diet not found'
+                error: 'Group diet not found',
+                data: null
             });
         }
 
@@ -66,6 +69,7 @@ router.get('/group/:groupId', async (req, res) => {
             data: groupDiet
         });
     } catch (error) {
+        console.error('Error fetching group diet:', error);
         res.status(500).json({
             success: false,
             error: 'Error fetching group diet',
@@ -74,14 +78,35 @@ router.get('/group/:groupId', async (req, res) => {
     }
 });
 
-// POST - Create new group diet from original diet
+// GET - All group diets by rodeo_id
+router.get('/rodeo/:rodeoId', async (req, res) => {
+    try {
+        const rodeoId = parseInt(req.params.rodeoId);
+        const groupDiets = await GroupDiet.findByRodeoId(rodeoId);
+        
+        res.json({
+            success: true,
+            data: groupDiets,
+            total: groupDiets.length
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: 'Error fetching rodeo group diets',
+            details: error.message
+        });
+    }
+});
+
+// POST - Create new group diet (actualizado para requerir rodeo_id)
 router.post('/', async (req, res) => {
     try {
         const {
             group_id,
+            rodeo_id,
             group_name,
             group_description,
-            diet_id, // Original diet to copy
+            diet_id,
             usage_condition,
             condition_description,
             priority,
@@ -89,11 +114,11 @@ router.post('/', async (req, res) => {
             notes
         } = req.body;
 
-        // Validation
-        if (!group_id || !group_name || !diet_id) {
+        // Validation - ahora rodeo_id es requerido
+        if (!group_id || !rodeo_id || !group_name || !diet_id) {
             return res.status(400).json({
                 success: false,
-                error: 'group_id, group_name, and diet_id are required'
+                error: 'group_id, rodeo_id, group_name, and diet_id are required'
             });
         }
 
@@ -113,6 +138,7 @@ router.post('/', async (req, res) => {
             // Create new group diet document
             groupDiet = new GroupDiet({
                 group_id,
+                rodeo_id: parseInt(rodeo_id),
                 group_name: group_name.trim(),
                 group_description: group_description || '',
                 diets: [],

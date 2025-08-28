@@ -19,16 +19,19 @@ here is everything  i see to improve or fix: so if i ask copilot for whats is le
 
 -Permitir crear un usuario para el cliente. asi puede usar dicho usuario en las apps
 agregar roles and permissions for that. 
+
 API para telefono:
     diet section: serve group and diets. allow cliente to choosee rodeo->group->diet. by default show all diet for the 
     groups of the first rodeo. 
     design endpoints for that
-        get()->retrive all diets
+        get()->retrive all diets for given rodeo_id,
+        {
+            pre
+        }
         post()->registrar dieta realizada{
             id_group:12,
             dieta_asignada:{
-                ingrediente_1:450,
-                .._2:340,
+                ingrediente_1:450,x
                 ..etc
             }
             dieta_real:{
@@ -42,3 +45,41 @@ API para telefono:
         los id de los animales pertenecietnes al grupo.
         de esta manera se puede hacer una consulta del tipo: que comio cada dia el animal 7, y se podria obtener dicho resultado
         a traves de tomar los valores de la dieta y dividirlos en array.length por ejemplo
+        registro dieta schema:
+
+        const dietRegistreSchema = new mongoose.Schema({
+        group_id:{
+            type: Number,
+            required: true,
+        }    
+        AnimalesDiet:{
+            type: Array,
+            required: true
+        }
+        description: {
+            type: String,
+            default: '',
+            trim: true
+        },
+        Dieta_Indicada: [DietaSchema], 
+        Dieta_Real: [DietaSchema],
+        total_weight: {
+            type: String,
+            default: ''
+        },
+        created_by: {
+            type: Number, // User ID from Laravel
+            required: false
+        },
+        notes: {
+            type: String,
+            default: '',
+            trim: true
+        }
+    }, {
+        timestamps: true
+    });
+
+
+- estoy hardcodeando el rodeo id, en el controlador de dietgroup  esta comentado el rodeo_id de la request, 
+aunque puede que no lo nececite enviar desde el front, asi hay varias cositas mas que debo recordar en el futuro.
