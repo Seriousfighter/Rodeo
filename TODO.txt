@@ -3,4 +3,97 @@ here is everything  i see to improve or fix: so if i ask copilot for whats is le
 -esto anda bien en docker//fix recording creations, it was working, now a dd("error") says: "error" // app/Http/Controllers/RecordingController.php:110
 
 -Add the funcion for add animals to a grup and  to move between groups
--Al eliminar un aminla, se debe eliminar
+
+
+-Dentro del menu cliente, el boton crear rodeo, debe automaticamnete elegir el cliente
+
+-Crear recording modificar: que al elegir por ejemplo ultrasonido me deje colorcar opcion de prñez o no, como en el caso grupal
+
+-En recording falta adaptar bien para la fecha, y mejorar opciones de registros
+
+-animal.show tiene que tener un boton, que: 
+        si pertenece a un grupo, 
+                poder acceder al mismo
+                cambiarla de grupo
+        acceso directo a su dieta.
+
+
+-Permitir crear un usuario para el cliente. asi puede usar dicho usuario en las apps
+agregar roles and permissions for that. 
+
+API para telefono:
+    diet section: serve group and diets. allow cliente to choosee rodeo->group->diet. by default show all diet for the 
+    groups of the first rodeo. 
+    design endpoints for that
+        get()->retrive all diets for given rodeo_id,
+        {
+            pre
+        }
+        post()->registrar dieta realizada{
+            id_group:12,
+            dieta_asignada:{
+                ingrediente_1:450,x
+                ..etc
+            }
+            dieta_real:{
+                ingrediente_1:500,
+                .._2:350,
+                ..etc
+            }
+        }
+        en el post se envian los datos a registrar,
+        en el DietApiservice.php debe procesarse y almacenarce en la db, se debe adjuntar un campo array con
+        los id de los animales pertenecietnes al grupo.
+        de esta manera se puede hacer una consulta del tipo: que comio cada dia el animal 7, y se podria obtener dicho resultado
+        a traves de tomar los valores de la dieta y dividirlos en array.length por ejemplo
+        registro dieta schema:
+
+        const dietRegistreSchema = new mongoose.Schema({
+        group_id:{
+            type: Number,
+            required: true,
+        }    
+        AnimalesDiet:{
+            type: Array,
+            required: true
+        }
+        description: {
+            type: String,
+            default: '',
+            trim: true
+        },
+        Dieta_Indicada: [DietaSchema], 
+        Dieta_Real: [DietaSchema],
+        total_weight: {
+            type: String,
+            default: ''
+        },
+        created_by: {
+            type: Number, // User ID from Laravel
+            required: false
+        },
+        notes: {
+            type: String,
+            default: '',
+            trim: true
+        }
+    }, {
+        timestamps: true
+    });
+
+
+- estoy hardcodeando el rodeo id, en el controlador de dietgroup  esta comentado el rodeo_id de la request, 
+aunque puede que no lo nececite enviar desde el front, asi hay varias cositas mas que debo recordar en el futuro.
+
+-LA api debe enviar todo en kilos, es decir si es 400 gr, convertirlo a kilos 0.4kg
+-Implementar la edicion de la dieta asignada al grupo. y corroborar la actualizacion en la app
+-TODO: REPRODUCCION, api para registrar servicios partos y secado.
+secado(vacas_ids[]){
+    for each vaca id, 
+    remove vaca_id from actual_group
+    add vaca_id to group_secas o asignacion manual
+}
+
+
+-Al eliminar un animal, se debe eliminar
+

@@ -108,6 +108,11 @@ const groupDietSchema = new mongoose.Schema({
         required: true,
         index: true
     },
+    rodeo_id: {
+        type: Number,
+        required: true,
+        index: true
+    },
     // Group basic info (cached for performance)
     group_name: {
         type: String,
@@ -179,6 +184,7 @@ groupDietSchema.index({ 'diets.usage_condition': 1 });
 groupDietSchema.index({ 'diets.status': 1 });
 groupDietSchema.index({ active_diet_id: 1 });
 groupDietSchema.index({ createdAt: -1 });
+groupDietSchema.index({ rodeo_id: 1, group_id: 1 }, { unique: true });
 
 // Instance methods
 groupDietSchema.methods.getActiveDiet = function() {
@@ -207,6 +213,10 @@ groupDietSchema.methods.setActiveDiet = function(dietId) {
 // Static methods
 groupDietSchema.statics.findByGroupId = function(groupId) {
     return this.findOne({ group_id: groupId, status: { $ne: 'archived' } });
+};
+
+groupDietSchema.statics.findByRodeoId = function(rodeoId) {
+    return this.find({ rodeo_id: rodeoId, status: { $ne: 'archived' } });
 };
 
 groupDietSchema.statics.getActiveGroupDiets = function() {

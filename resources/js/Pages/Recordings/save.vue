@@ -252,7 +252,7 @@
                         <Link 
                             :href="route('animals.show', props.recording.animal_id)"
                             class="inline-flex justify-center items-center px-6 py-3 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium rounded-lg transition-colors duration-200"
-                        >sds
+                        >
                             <i class="fas fa-times mr-2"></i>
                             Cancelar
                         </Link>
