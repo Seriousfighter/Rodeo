@@ -78,6 +78,8 @@ interface GroupInterface
      */
     public function getAnimals($groupId);
 
+    public function getAnimalQuantity($groupId);
+
     /**
      * Replace all animals in a group
      * 

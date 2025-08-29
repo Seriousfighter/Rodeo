@@ -37,6 +37,7 @@ class GroupDietController extends Controller
             try{
                 $groupDiets = $this->dietApi->getGroupDietByGroupId($groupId);
             }catch (\Exception $e) {
+
                 $groupDiets = [];
             }
             // Get all available diets for assignment
@@ -63,6 +64,7 @@ class GroupDietController extends Controller
         
         $request->validate([
             'diet_id' => 'required|string',
+            //'rodeo_id' => 'required|integer',
             'usage_condition' => 'nullable|string|in:normal,rain,hot_weather,cold_weather,drought,winter,summer,emergency,custom',
             'condition_description' => 'nullable|string',
             'priority' => 'nullable|integer|min:1',
@@ -80,6 +82,7 @@ class GroupDietController extends Controller
             
             $assignmentData = [
                 'group_id' => (int) $groupId,
+                'rodeo_id' => (int) $group->rodeo_id,
                 'group_name' => $group->name,
                 'group_description' => $group->description ?? '',
                 'diet_id' => $request->diet_id,
@@ -178,6 +181,7 @@ class GroupDietController extends Controller
                     'message' => 'Dieta removida del grupo exitosamente'
                 ]);
             } else {
+                //en el futuro cambiar esto por inertia
                 return response()->json([
                     'success' => false,
                     'message' => $result['error'] ?? 'Error al remover la dieta'
