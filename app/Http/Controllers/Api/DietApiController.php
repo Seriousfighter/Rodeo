@@ -60,6 +60,7 @@ class DietApiController extends Controller
             if (!empty($group['diets'])) {
                 foreach ($group['diets'] as $diet) {
                     $simplifiedDiet = [
+                        'diet_id' => $diet['_id'] ?? $diet['diet_id'] ?? null,
                         'diet_name' => $diet['name'],
                         'components' => []
                     ];
