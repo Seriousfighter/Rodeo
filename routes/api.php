@@ -11,15 +11,10 @@ Route::get('/user', function (Request $request) {
 
 
 ###################################################################################################################################################
-Route::post('/login', [AuthController::class, 'login'])
-    ->name('login');
+Route::post('/api/login', [AuthController::class, 'login'])
+    ->name('api.login');
     //->middleware('guest'); // Solo permite acceso a usuarios no autenticados
-Route::post('/', function () {
-    return response()->json([
-        'message' => 'Rodeo diet api.',
-        'error' => 'no autenticado'
-    ], 401);
-})->name('login');
+
 ###################################################################################################################################################
 
 
