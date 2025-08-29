@@ -4,6 +4,7 @@ here is everything  i see to improve or fix: so if i ask copilot for whats is le
 
 -Add the funcion for add animals to a grup and  to move between groups
 
+
 -Dentro del menu cliente, el boton crear rodeo, debe automaticamnete elegir el cliente
 
 -Crear recording modificar: que al elegir por ejemplo ultrasonido me deje colorcar opcion de prñez o no, como en el caso grupal
@@ -92,4 +93,7 @@ secado(vacas_ids[]){
     remove vaca_id from actual_group
     add vaca_id to group_secas o asignacion manual
 }
+
+
+-Al eliminar un animal, se debe eliminar
 
