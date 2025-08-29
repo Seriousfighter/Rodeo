@@ -85,4 +85,11 @@ API para telefono:
 aunque puede que no lo nececite enviar desde el front, asi hay varias cositas mas que debo recordar en el futuro.
 
 -LA api debe enviar todo en kilos, es decir si es 400 gr, convertirlo a kilos 0.4kg
+-Implementar la edicion de la dieta asignada al grupo. y corroborar la actualizacion en la app
+-TODO: REPRODUCCION, api para registrar servicios partos y secado.
+secado(vacas_ids[]){
+    for each vaca id, 
+    remove vaca_id from actual_group
+    add vaca_id to group_secas o asignacion manual
+}
 
