@@ -181,6 +181,7 @@ class GroupDietController extends Controller
                     'message' => 'Dieta removida del grupo exitosamente'
                 ]);
             } else {
+                //en el futuro cambiar esto por inertia
                 return response()->json([
                     'success' => false,
                     'message' => $result['error'] ?? 'Error al remover la dieta'

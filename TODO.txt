@@ -83,3 +83,6 @@ API para telefono:
 
 - estoy hardcodeando el rodeo id, en el controlador de dietgroup  esta comentado el rodeo_id de la request, 
 aunque puede que no lo nececite enviar desde el front, asi hay varias cositas mas que debo recordar en el futuro.
+
+-LA api debe enviar todo en kilos, es decir si es 400 gr, convertirlo a kilos 0.4kg
+
