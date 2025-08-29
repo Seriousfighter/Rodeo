@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Services\DietApiService;
+use App\Services\GroupService;
 use App\Services\Interfaces\AnimalInterface;
-
+use App\Services\Interfaces\GroupInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -12,10 +13,12 @@ use Illuminate\Support\Facades\Log;
 class DietApiController extends Controller
 {
     private $dietApiService;
+    protected GroupInterface $groupService;
 
-    public function __construct(DietApiService $dietApiService)
+    public function __construct(DietApiService $dietApiService, GroupInterface $groupService)
     {
         $this->dietApiService = $dietApiService;
+        $this->groupService = $groupService;
     }
 
     public function index(Request $request): JsonResponse
@@ -51,6 +54,7 @@ class DietApiController extends Controller
 
         foreach ($groupDiets as $group) {
             $simplifiedGroup = [
+                'qty' => $this->groupService->getAnimalQuantity($group['group_id']),
                 'group_id' => $group['group_id'],
                 'group_name' => $group['group_name'],
                 'diets' => []

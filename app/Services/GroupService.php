@@ -207,4 +207,14 @@ class GroupService implements GroupInterface
         $group->Animals()->sync($animalIds);
         return true;
     }
+
+    public function getAnimalQuantity($groupId){
+        $group = Group::find($groupId);
+        
+        if (!$group) {
+            return 0;
+        }
+
+        return $group->Animals()->count();
+    }
 }
