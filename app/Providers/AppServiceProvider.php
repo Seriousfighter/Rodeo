@@ -13,6 +13,7 @@ use App\Services\Interfaces\AnimalInterface;
 use App\Services\AnimalService;
 use App\Services\Interfaces\GroupInterface;
 use App\Services\GroupService;
+use Illuminate\Support\Facades\URL;
 
 //
 
@@ -34,6 +35,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if(app()->environment('production')){
+                URL::forceScheme('https');      
+        }
     }
+
 }
